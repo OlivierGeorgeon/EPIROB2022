@@ -48,7 +48,8 @@ developmental learning, interactionism, affordance, autonomous mental developmen
 
 \section{Introduction}
 
-In this paper, we address the problem of the integration of mobile elements with unknown movement in an emergent model of the environment constructed by an artificial agent that initially ignores elements that compose its environment and geometrical properties of its environment. Such an agent can be defined as environment-agnostic \cite{georgeon:designing}.
+We address the problem of how an artificial agent that learns an emergent model of its environment through interaction can acquire knowledge about mobile entities that move freely in the environment (e.g., other agents). 
+We build upon our previous work that learned a model of fixed entities and their geometrical properties. The addition into the environment of entities that move according to their own rules makes the learning even more challenging.
 
 %long term goal of the emergence of collaborative behaviors between artificial agent that initially ignores elements that compose its environment and geometrical properties of its environment. Such an agent can be defined as environment-agnostic [].
 %\newline
@@ -62,27 +63,50 @@ In this paper, we address the problem of the integration of mobile elements with
 
 %- introduction brève du DL, introduction du vocabulaire\newline
 
-Our work is based on a model proposed by Georgeon and Aha \cite{georgeon:radical}, called Radical Interactionism (RI), in which action-perception couples are considered as atomic and kept embedded within
-data structures called interactions, modeling Piaget’s notion of sensorimotor scheme \cite{piaget:reality}. This approach assumes that new agents come up with a predefined set of uninterpreted interactions associated with predefined valences, and seek to enact interactions with positive valence and to avoid interactions with negative valences. This motivation principle is called interactional motivation \cite{georgeon_interactional_2012}, and is related to the problem of intrinsic motivation and developmental learning \cite{oudeyer_intrinsic_2007}. 
+This study is situated within the paradigm of artificial constructivist learning \cite[e.g.]{wang_new_2012} and enactive learning \cite[e.g.]{froese2009enactiveAI}. 
+In this paradigm, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget:reality}.  
+We initialize the agent with a predefined set of control loops called \textit{primitive interactions}. 
+We associate each primitive interaction with a predefined numerical \textit{valence}.
+We design the agent's software so that the agent seeks to enact interactions that have positive valences, and to avoid enacting interactions that have negative valences. 
+Such software endows the agent with a kind of self motivation that we have called \textit{interactional motivation} \cite{georgeon_interactional_2012}.
+This view on self motivation relates to the notion of \textit{intrinsic motivation} of artificial agents for \textit{developmental learning} \cite[e.g.]{oudeyer_intrinsic_2007}.
+For a complete description, we refer the reader to our previous papers in which we have called this approach \textit{Radical Interactionism} (RI) \cite{georgeon:radical} and \textit{artificial interactionism} \cite{GuillerminGeorgeon2022}. 
+Overall, the learning is \textit{unsupervised}. 
+There are no human-defined labels attached with perceptions or with categories of entities, no pre-coded ontology of the world, no semantics associated with action data or sensori data.  
 
 %The agent perceives and interprets its environment by identifying affordances [] rather than recognizing objects on the basis of predefined features. This approach addresses the knowledge grounding problem [] by letting knowledge of objects arise from experience.
 
-Our long-term goal is to study the emergence of collaborative behaviors in group of environmentally-agnostic agents that can arise from the interaction with the environment and with other agents. Generating behaviors implying other agents requires overcoming two main problems:
+In designing agents that autonomously learn to interact with other agents, we pursue the long-term goal of allowing the emergence of collective behaviors within groups of artificial agents. Generating collective behaviors involving other agents requires overcoming two main problems:
 
-1) learning to define, recognize and localize entities that have free movements (e.g. other agents), starting with uninterpreted sensory stimuli and no notion of space,
+1) learning to define, recognize and localize other agents that make individual movements in the environment,
 
-2) being able to anticipate intentions of other agents based on their own environmental contexts, which is related to the intersubjectvity problem.
+2) inferring the intentions of these other agents based on their own environmental contexts, which is related to the intersubjectvity problem.
 
-This paper focus on the resolution of the first problem. The paper is subdivided as follow: Section II summarizes and formalizes the Radical Interactionism model and the architecture constructing the environment model. Section III presents a model for defining and recognizing probabilistic affordances, and Section IV presents a mechanism to recognize and localize distant probabilistic affordances in space. Finally, Section V encompasses some conclusive remarks and future development of the intersubjectivity problem.
+This paper focuses on the resolution of the first problem. 
+It is subdivided as follow: Section II summarizes and formalizes the Radical Interactionism model and the architecture constructing the environment model. Section III presents a model for defining and recognizing probabilistic affordances, and Section IV presents a mechanism to recognize and localize distant probabilistic affordances in space. Finally, Section V encompasses some conclusive remarks and future development of the intersubjectivity problem.
 
 \section{The Radical Interactionism model}
 
 %Developmental learning [17] makes the assumption that the agent is agnostic of its environment [5]. This assumption prohibits considering that the agent can identify states, both for its environment and for itself. 
 
-The Radical Interactionism approach is a model of Developmental Learning \cite{oudeyer_intrinsic_2007} that only considers the point of view of the agent, prohibiting considering that the agent can identify states, both for its environment and for itself. Instead, the agent can only consider the result of enacting sensorimotor schemes (or interactions), and learn to detect and exploit regularities offered by its environment. %This theoretically simplifies the system complexity as it depend on the complexity of agent's sensorimotor system rather than environment complexity.
-Formally, a Radical Interactionism (RI) algorithm \cite{georgeon:radical, GuillerminGeorgeon2022} begins with a set $I$ of \textit{primitive interactions}. Each primitive interaction $i$ is attributed a valence $\nu_i$ that defines the agent’s behavioral preferences. At step $t$, the agent selects an intended interaction $i_t$, and is informed, at the end of step $t$ of the interaction $e_t$ that was actually enacted. The enaction is a success if $i_t = e_t$, and a failure otherwise. A RI agent learns to anticipate the results of its interactions, and tries to enact interactions with high valences.
+In contrast with most machine learning approaches, a Radical Interactionist agent cannot directly detect the state of its environment through perceptual data. 
+The agent's input data is not a percept of the state of the environment but an outcome of a control loop. 
+An RI agent learns and exploits regularities in sequences of the control loops offered by its coupling with its environment.  
 
-The RI model was then extended to help discovering spatial regularities of the environment, by allowing experiencing simultaneous enaction of multiple interactions. The Parallel RI (PRI) considers additional stimuli that cannot be separated from the movement that produced them. The optical flow is an example of such stimuli, that must be associated to a movement to characterize a unique position in space. Thus, the PRI model considers \textit{primary} interactions as sensorimotor schemes (action,perception), and \textit{secondary} interactions as a couple (interaction, stimulus). Formally, a PRI algorithm starts with a set I of interactions (primary and secondary).  At step t, the agent selects an intended interaction it, and is informed, at the end of step t of a set of interactions $E_t=\{e_k\}t$ that were enacted, consisting of a primary interaction and a set of secondary interactions associated to this primary interaction.
+%This theoretically simplifies the system complexity as it depend on the complexity of agent's sensorimotor system rather than environment complexity.
+
+Let $I$ be the set of predefined primitive interactions (pointers to predefined control loops), and $\nu_i$ the predefined valence of primitive interaction $i \in I$.
+At the beginning of step $t$, the agent selects an \textit{intended interaction} $i_t \in I$. 
+An example consists in moving forward while detecting no obstacle.
+At the end of step $t$, the agent is informed of the \textit{enacted interaction} $e_t \in I$ that was actually enacted. 
+If $i_t = e_t$ then the enaction is a success. The agent did move forward without detecting an obstacle. 
+Otherwise, the tentative enaction of $i_t$ was a failure. 
+For example, the agent actually enacted another interaction consisting in bumping into an obstacle, which may have a negative valence.
+An RI agent learns to anticipate the results of its interactions, and tries to enact interactions that have a high valences.
+
+In some studies \cite{}, we have extended the RI model to help discovering spatial regularities of the environment, by allowing experiencing simultaneous enaction of multiple interactions. 
+The Parallel RI (PRI) considers additional stimuli that cannot be separated from the movement that produced them. 
+The optical flow is an example of such stimuli, that must be associated to a movement to characterize a unique position in space. Thus, the PRI model considers \textit{primary} interactions as sensorimotor schemes (action,perception), and \textit{secondary} interactions as a couple (interaction, stimulus). Formally, a PRI algorithm starts with a set I of interactions (primary and secondary).  At step t, the agent selects an intended interaction it, and is informed, at the end of step t of a set of interactions $E_t=\{e_k\}t$ that were enacted, consisting of a primary interaction and a set of secondary interactions associated to this primary interaction.
 
 Previous PRI architectures demonstrated the possibility, for an environmentally-agnostic agent, to define and recognize elements affording their interactions, to localize distant affordances, and to store and keep trace of them in an emergent structure, called space memory, allowing to generate an implicit context that is used to generate behaviors satisfying motivational principles. 
 
