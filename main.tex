@@ -64,7 +64,7 @@ We build upon our previous work that learned a model of fixed entities and their
 %- introduction brève du DL, introduction du vocabulaire\newline
 
 This study is situated within the paradigm of artificial constructivist learning \cite{wang_new_2012} and enactive learning \cite{froese2009enactiveAI}. 
-In this paradigm, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget:reality}.  
+In this paradigm, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget2013construction}.  
 We initialize the agent with a predefined set of control loops called \textit{primitive interactions}. 
 We associate each primitive interaction with a predefined numerical \textit{valence}.
 We design the agent's software so that the agent seeks to enact interactions that have positive valences, and to avoid enacting interactions that have negative valences. 
@@ -85,28 +85,32 @@ In designing agents that autonomously learn to interact with other agents, we pu
 This paper focuses on the resolution of the first problem. 
 It is subdivided as follow: Section II summarizes and formalizes the Radical Interactionism model and the architecture constructing the environment model. Section III presents a model for defining and recognizing probabilistic affordances, and Section IV presents a mechanism to recognize and localize distant probabilistic affordances in space. Finally, Section V encompasses some conclusive remarks and future development of the intersubjectivity problem.
 
-\section{The Radical Interactionism model}
+\section{The Radical Interactionism (RI) model}
 
 %Developmental learning [17] makes the assumption that the agent is agnostic of its environment [5]. This assumption prohibits considering that the agent can identify states, both for its environment and for itself. 
 
-In contrast with most machine learning approaches, a Radical Interactionist agent cannot directly detect the state of its environment through perceptual data. 
+In contrast with most machine learning approaches, an RI agent cannot directly detect the state of its environment through perceptual data. 
 The agent's input data is not a percept of the state of the environment but an outcome of a control loop. 
 An RI agent learns and exploits regularities in sequences of the control loops offered by its coupling with its environment.  
-
+The learning mechanism differs from reinforcement learning (e.g., as it is typically implemented in a Partially Observable Markov Decision Process, POMDP) by the fact that RI agents have no reward defined as a function of the system's state. 
+Our goal is not to design agents that reach predefined goal states or maximize a reward value, but to generate open-ended learning and collective behaviors.
 %This theoretically simplifies the system complexity as it depend on the complexity of agent's sensorimotor system rather than environment complexity.
 
-Let $I$ be the set of predefined primitive interactions (pointers to predefined control loops), and $\nu_i$ the predefined valence of primitive interaction $i \in I$.
+Let $I$ be the set of predefined primitive interactions (pointers to predefined control loops), and $\nu_i \in \mathbb{R}$ the predefined valence of primitive interaction $i \in I$.
 At the beginning of step $t$, the agent selects an \textit{intended interaction} $i_t \in I$. 
-An example consists in moving forward while detecting no obstacle.
+An example consists in moving forward for a predefined amount of time while detecting no obstacle.
 At the end of step $t$, the agent is informed of the \textit{enacted interaction} $e_t \in I$ that was actually enacted. 
 If $i_t = e_t$ then the enaction is a success. The agent did move forward without detecting an obstacle. 
 Otherwise, the tentative enaction of $i_t$ was a failure. 
 For example, the agent actually enacted another interaction consisting in bumping into an obstacle, which may have a negative valence.
 An RI agent learns to anticipate the results of its interactions, and tries to enact interactions that have a high valences.
 
-In some studies \cite{}, we have extended the RI model to help discovering spatial regularities of the environment, by allowing experiencing simultaneous enaction of multiple interactions. 
+In some studies \cite{}, we have extended the RI model to help discovering spatial regularities of the environment, by allowing the simultaneous enaction of multiple interactions. 
 The Parallel RI (PRI) considers additional stimuli that cannot be separated from the movement that produced them. 
-The optical flow is an example of such stimuli, that must be associated to a movement to characterize a unique position in space. Thus, the PRI model considers \textit{primary} interactions as sensorimotor schemes (action,perception), and \textit{secondary} interactions as a couple (interaction, stimulus). Formally, a PRI algorithm starts with a set I of interactions (primary and secondary).  At step t, the agent selects an intended interaction it, and is informed, at the end of step t of a set of interactions $E_t=\{e_k\}t$ that were enacted, consisting of a primary interaction and a set of secondary interactions associated to this primary interaction.
+The optical flow is an example of such stimuli, that must be associated to a movement to characterize a unique position in space. 
+Thus, the PRI model considers \textit{primary} interactions as sensorimotor schemes (action,perception), and \textit{secondary} interactions as a couple (interaction, stimulus). 
+Formally, a PRI algorithm starts with a set I of interactions (primary and secondary). 
+At step t, the agent selects an intended interaction $i_t$, and is informed, at the end of step t of a set of interactions $E_t=\{e_k\}t$ that were enacted, consisting of a primary interaction and a set of secondary interactions associated to this primary interaction.
 
 Previous PRI architectures demonstrated the possibility, for an environmentally-agnostic agent, to define and recognize elements affording their interactions, to localize distant affordances, and to store and keep trace of them in an emergent structure, called space memory, allowing to generate an implicit context that is used to generate behaviors satisfying motivational principles. 
 
