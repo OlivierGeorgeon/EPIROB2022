@@ -7,8 +7,7 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
-\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
 \begin{document}
 
 \title{%Toward Intersubjectivity in Developmental Agents: Integrating Probabilistic Affordances in the Emergent Model of the Environment.
@@ -119,21 +118,28 @@ However, previous implementations fails to integrate probabilistic affordances, 
 
 When the agent tests an interaction, three cases can be defined from an external observer's perspective:
 \begin{enumerate}
-\item The affordance is present at the right place, and the agent can enact the interaction successfully. X
-\item The affordance is present, but the interaction fails. X
-\item The affordance is absent, leading to a failure of the interaction. X
+\item The affordance is present at the right place, and the agent can enact the interaction successfully. (e.g. a prey is in front of the agent, and the agent could grabs the prey).
+\item The affordance is present, but the interaction fails. (e.g. a prey is i front of the agent, but the prey moved and the agent missed catching the prey).
+\item The affordance is absent, leading to a failure of the interaction. (e.g. there is no prey in front of the agent, leading to a certain failure of catching a prey).
 \end{enumerate}
 From the agent's perspective, the results of situations 2 and~3 cannot be distinguished, as they have the same result. Moreover, situations 2 prevents the construction of the signature, and thus the possibility to distinguish situations 1 and 2 from situations 3.
-However, our preliminary tests showed an interesting results: despite remaining negative due to situations 2, the signature responses are slightly higher in case of situations 1-2 than in situations 3. Indeed, the existence of situations 1 influence the signature, allowing the context of interactions corresponding to the affordance to emerge while remaining insufficient to predict a success. From this observation, we propose the following principle: the average value of negative predictions is evaluated using:
-\begin{equation}
-\overline{S^-}^{t+1}~=~{{\overline{S^-}^{t} \times n ~+~ S(E_t)} \over{n+1}}~, when~ S(E_t)<0
-\end{equation}
-Then, when the prediction $S(E_t)>\overline{S^-}$, the signature is not learned in case of failure. This principle thus decrease the influences of situations that are expected to be situation 2. %, allowing the construction of the signature. 
+However, our preliminary tests showed an interesting results: despite remaining negative due to situations 2, the signature responses are slightly higher in case of situations 1-2 than in situations 3. Indeed, the existence of situations 1 influence the signature, allowing the context of interactions corresponding to the affordance to emerge while remaining insufficient to predict a success.
+
+From this observation, we propose to use the average prediction in case of failure ($\overline{S_i^f}$) as a threshold to distinguish situations 2 and 3 after a failure. Then, when the interaction failed in an assumed situation 2 (i.e. $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limit the influence of situations 2 in preventing the emergence of the signature. This principle is applied when $\overline{S_i^f}$ is lower than a threshold, assuming that the signature started to emerge (we used a threshold of -0.9).
+
+%The average value of negative predictions is evaluated using:
+%\begin{equation}
+%\overline{S_i^f}^{t+1}~=~{{\overline{S_i^f}^{t} \times n ~+~ S_i(E_t)} \over{n+1}}~, when~ S_i(E_t)<0
+%\end{equation}
+%Then, when the prediction $S(E_t)>\overline{S^-}$, the signature is not learned in case of failure. This principle thus decrease the influences of situations that are expected to be situation 2. %, allowing the construction of the signature. 
 %This principle is applied when the average prediction $\overline{S^-}$ is lower than a treshold (we used a value of -0.9), to let the context of interaction corresponding to the affordance starting to emerge in the signature.
 
-As several interactions can be prevented by the presence of an element, and thus are expected to success when the affordance is absent, we also define the average value of positive predictions $\overline{S^+}$. When this average value is greater than a treshold (we used a value of 0.9), a prediction lower than $\overline{S^+}$ is not learned in case of success.
+Several interactions can be prevented by the presence of an element (e.g. moving a step forward is expected to success, until an obstacle appears). In such cases, situations 1' are related to the failure of the interaction, and situations 2' and 3' to its success. As situations 2' and 3' are expected to be more frequent than situations 1', the average of predictions will converge to a positive value. We thus used the average of positive predictions $\overline{S_i^s}$ as a threshold to prevent the signature reinforcement in case of success in an assumed situation 2' (i.e. $S_i(E_t)<\overline{S_i^s}$). This principle is applied when $\overline{S_i^s}$ is greater than a threshold (we used a threshold of 0.9).
 
-It is also possible to define the ratio of interaction success when the prediction $S(E_t)$ is greater than the average $\overline{S^-}$ (or interaction failure when $S(E_t)$ is lower than the average $\overline{S^+}$), implying that the agent is in a situation of type 1 or 2. This ratio thus measures the probability that the affordance actually affords successfully the interaction.
+
+%and thus are expected to success when the affordance is absent, we also define the average value of positive predictions $\overline{S^s}$. When this average value is greater than a treshold (we used a value of 0.9), a prediction lower than $\overline{S^+}$ is not learned in case of success.
+
+It is also possible to define the ratio of interaction success when the prediction $S(E_t)$ is greater than the average $\overline{S^f}$ (or interaction failure when $S(E_t)$ is lower than the average $\overline{S^s}$), implying that the agent is in a situation of type 1 or 2 (or 1' or 2'). This ratio thus measures the probability that the presence of the affordance actually affords successfully the interaction.
 
 
 
@@ -218,46 +224,53 @@ It is also possible to define the ratio of interaction success when the predicti
 
 The detection of distant affordances (described in Section IV) requires to differentiate the possible contexts affording an interaction, and attribute a probability to each context.
 
-We propose an adaptation of the signature mechanism, based on multiple neurons. Each signature of an interaction $i$ consists of a set of $n$ neurons $N_k^i$. A neuron has an output defined as:
+We propose an adaptation of the signature mechanism, based on multiple neurons. Each signature $S_i$ consists of a set of $n$ neurons $N_k^i$ ; the neuron with the strongest output defines the prediction of the signature. In case of success, the neuron with the strongest output is reinforced, while a failure reinforce all neurons. This competition leads to a specialization of each neuron for a specific context, while they are desensitized from other contexts. Thus, with a sufficient number of neurons, a signature can identify contexts affording its interaction independently.
+
+Formally, a neuron $k$ is defined as a set of weights $w_l^k$ (with $Card(\{w_l^k\})=Card(I)$, with an output defined as:
 \begin{equation}
-N_i^k(E_t)~=~f(\sum_{i} E_t[i] \times x[i])~,~ f(x) = { {1}\over{1+e^{-x} }}
+N_i^k(E_t)~=~f(\sum_{i} E_t[i] \times w[i])~,~ f(x) = { {1}\over{1+e^{-x} }}
 \end{equation}
-The interactional context $E_t$ takes the form of a vector of size $Card(I)$, where $E_t[k]=1$ when interaction $i_k$ is enacted as a success and $E_t[k]=0$ otherwise.
+where the interactional context $E_t$ takes the form of a vector of size $Card(I)$, with $E_t[k]=1$ when interaction $i_k$ is enacted as a success and $E_t[k]=0$ otherwise.
 
-Then, the response of the group of neurons is defined as the maximum output value among the group:
+Then, the response of the group is defined as the maximum output, and remapped to a range in $[-1;1]$:
 \begin{equation}
-N_i(E)~=~max_k N_i^k(E_t)
+N_i(E)~=~max_k (N_i^k(E_t) ) \: \times \: 2 ~+~ 1
 \end{equation}
-In order to consider a signature output in the $[-1;1]$ range and to consider interactions that are afforded by the absence of their affordance instead of their presence, we added an output weight $W^i$ defining the output of the signature:
+In order to consider interactions that are afforded by the absence of their affordance instead of their presence, we added an output weight $W_i$ defining the output of the signature:
 \begin{equation}
-S_i(E_t)~=~(N_i(E_t) \times 2 -1 ) \times W^i
+S_i(E_t)~=~N_i(E_t) \times W_i
 \end{equation}
-The weight $W^i$ is restrained in the interval $[-1,1]$, defining the certitude output of the signature in the $[-1,1]$ interval.
+The weight $W_i$ is restrained in the interval $[-1,1]$, allowing to inverse the result of the prediction, which makes neurons integrating contexts preventing the enaction of $i$.
 
-The signature learning process is described below :
+The learning process uses a classical gradient descent:
 
-- The candidate signature $i$ stores the signature certitude $S^i$ output value $N^i$ and output value of each neuron $N_k^i$ of the signature. Once intended, the enaction of $i$ can be a success ($R_t=1$) or a failure ($R_t=-1$).
+%- The candidate signature $i$ stores the signature certitude $S^i$ output value $N^i$ and output value of each neuron $N_k^i$ of the signature. Once intended, the enaction of $i$ can be a success ($R_t=1$) or a failure ($R_t=-1$).
 
-- The weight $W^i$ is updated as follow:
+- The enaction result is defined as $R_t=1$ in case of success and $R_t=-1$ in case of failure.
 
-$W^i ~\Leftarrow~ W^i+ \Delta^i * (\alpha * N^i - \alpha /2)$, $\Delta^i=R_t-S^i$
+- The weight $W_i$ is updated as follow:
 
-with $\alpha$ the learning rate.
+$W^i ~\Leftarrow~ W^i+ \Delta^i * (\alpha * N^i - \alpha /2)$, ~with $\Delta^i=R_t-S_i(E_t)$
+and $\alpha$ the learning rate.
 
-- In case of a success, only the neuron with higher output is learned using a classical gradient descent:
+- In case of a success, only the neuron with higher output is reinforced, all neurons are reinforced in case of failure:
 
-$W_{max}^i ~\Leftarrow~ W_{max}^i+ \Delta_{max}^i * N_{max}^i$,
+$W_{max}^i ~\Leftarrow~ W_k^i+ \Delta_k^i * N_k^i$,
+with $\Delta_k^i=(R_t*W_i + 1)/2 - N_k^i$
 
-with $\Delta_{max}^i=(R*W^i)/2+0.5 - N_k^i$
-
-- In case of a failure, all neurons are learned.
 
 %Note that the principle described in Section III-A is applied. 
 To increase the specialization of neurons, in case of a success, weights of the most active neuron connected to failed interaction can be reduced (desensitizing this neuron from other contexts than the current one) and reducing weights of other neurons that are related to successful interactions (desensitizing other neurons from the current context).
 
 %The signature $S_i$ can be subdivided into contexts $S_i^{j,n}$ identified by a neuron index $n$ and a primary interaction $j$ (i.e. the sub-set of weights of neuron $n$ of $S_i$ that are related to interaction $j$ and its associated secondary interactions). It is then possible to define the ratio of success and of failure of each context individually by updating ratios of the context $S_i^{j,n}$, designated by the enacted primary interaction $j$ and the most active neuron $n$.
 
-A consequence of this implementation is that high weights of neurons characterize contexts affording an interaction. It is also possible to subdivide weighs of a neuron by primary interaction, each group containing a weight related to a primary interaction and weights related to its associated secondary interaction. Thus, a signature $S_i$ can be subdivided into minimal contexts $C_{j,n}^{S_i}$, associated to a primary interaction $j$ and a neuron $n$. It is then possible to define the ratio of success and of failure of each context individually by updating ratios of the context $C_{j,n}^{S_i}$ when primary interaction $j$ is enacted and neuron $n$ has the highest activity.
+A consequence of this implementation is that high weights of neurons characterize contexts affording an interaction. It is also possible to consider weighs of a neuron by primary interaction, each group containing a weight related to a primary interaction and weights related to its associated secondary interaction. Thus, a signature $S_i$ can be subdivided into minimal contexts $C_{j,n}^{S_i}$, associated to a primary interaction $j$ and a neuron $n$. It is then possible to define the ratio of success $p_{j,n}^{s,i}$ and of failure $p_{j,n}^{f,i}$ of each context individually by updating them when primary interaction $j$ is enacted and neuron $n$ has the highest activity, and $S_i(E_t)<\overline{S_i^s}$ or $S_i(E_t)>\overline{S_i^f}$.
+
+\begin{figure}[htbp]
+\centerline{\includegraphics[scale=0.7]{img/signature_model.pdf}}
+\caption{Signature architecture based on multiple neurons. As the signature output relies on the neuron with greatest output, neurons are in competitions with each other, leading to a specialisation of each neuron for a specific context. The last function remaps the output to range $[-1;1]$ and uses a global weight $W_i$, that can inverse the signature result, allowing the representation of contexts preventing the enaction of an interaction.}
+\label{fig}
+\end{figure}
 
 \subsection{Implementation}
 
@@ -294,62 +307,88 @@ The environment is populated by three types of objects offering spatial regulari
 \label{fig}
 \end{figure}
 
-The fishes move randomly in the environment: at each simulation step, a fish can move in one of these five directions, with a probability of 20\%: immobile, left, right, top, bottom. If the fish cannot move in the selected direction because of an obstacle (wall, alga or other fish), the fish remains at its current position, making the immobile situation probability slightly higher than other directions. All object are opaques: the agent cannot perceive an element behind another one.
+The fishes move randomly in the environment: at each simulation step, a fish can move in one of these five directions, with a probability of 20\%: immobile, left, right, top, bottom. If the fish cannot move in the selected direction because of an obstacle (wall, alga or other fish), the fish remains at its current position, making the immobile situation probability slightly higher than other directions. This random movement simulates agents with unknown behavior. All object are opaques: the agent cannot perceive an element behind another one.
+
+
+%\begin{figure}[htbp]
+%\centerline{\includegraphics[scale=0.5]{img/Signatures1.pdf}}
+%\caption{Signatures of bump (left column), and seeing green while moving forward (middle) and seeing red while turning left (right) at positions identified by a red square. These signatures were recorded after 100 000 simulation steps. A signature is characterized by a set of weights of 7 formal neurons. As external observers, we can organize these weights to make signatures more readable. First, weights of secondary interaction are grouped according to their associated primary interaction (from top to bottom: forward, eat, turn left, turn right). Weights associated to primary interactions and the bias are represented with squares below. Then each group is organized to match the associated position in space, relative to the agent (orange triangle). Finally, colors are overlapped to generate signatures under the form of a RGB image. As these signatures identified a unique context affording these interaction, unused neurons' weights are not represented. Interaction bump (left) is afforded by a green object in front of the agent, but also after bumping. The offset between the position associated to visual interactions and the position of their affordance correspond to the movement produced by their associated primary interaction. This property is exploited to project signatures and detect distant affordances.}
+%\label{fig}
+%\end{figure}
 
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[scale=0.5]{img/Signatures1.pdf}}
-\caption{Signatures of bump (left column), and seeing green while moving forward (middle) and seeing red while turning left (right) at positions identified by a red square. These signatures were recorded after 100 000 simulation steps. A signature is characterized by a set of weights of 7 formal neurons. As external observers, we can organize these weights to make signatures more readable. First, weights of secondary interaction are grouped according to their associated primary interaction (from top to bottom: forward, eat, turn left, turn right). Weights associated to primary interactions and the bias are represented with squares below. Then each group is organized to match the associated position in space, relative to the agent (orange triangle). Finally, colors are overlapped to generate signatures under the form of a RGB image. As these signatures identified a unique context affording these interaction, unused neurons' weights are not represented. Interaction bump (left) is afforded by a green object in front of the agent, but also after bumping. The offset between the position associated to visual interactions and the position of their affordance correspond to the movement produced by their associated primary interaction. This property is exploited to project signatures and detect distant affordances.}
+\centerline{\includegraphics[scale=0.5]{img/Signatures1_3.pdf}}
+\caption{Signatures of interaction \textit{bump}, recorded after 100 000 simulation steps. A signature is characterized by the weights of 6 formal neurons, each neuron being represented by a column. As the signature identified a unique context, we only represent weights of one neuron. As external observers, we can organize weights of a neuron to make signatures more readable: first, weights associated with primary interactions are represented with five squares below (green for a positive weight, red for a negative weight). Weights associated with secondary interaction are grouped according to their primary interaction, forming the four groups (from top to bottom: forward, eat, turn left, turn right ; bump does not produce visual interactions). Each group is organized to place visual interaction with their associated position in space, relative to the agent (orange triangle). Colors associated with visual interactions are overlapped to generate signatures under the form of a RGB image. Signature of bump identified a context that consist of seeing a green element in front of the agent, which correspond, from an external observer perspective, to the presence of a wall in front of the agent. Bump is also related to the success of bump: indeed, the agent can bump repeatedly. The signature thus gathered every interaction allowing to detect the presence of a wall in front of the agent.}
 \label{fig}
 \end{figure}
 
 
+%\begin{figure}[htbp]
+%\centerline{\includegraphics[scale=0.5]{img/Signatures1_4.pdf}}
+%\caption{Signatures two visual interactions, identified by red squares: seeing green element while moving forward and seeing red element while turning left. As only one context was identified by these signatures, we only display weights of a unique neuron. The offset between the position associated with the visual interactions and the position of their affordance correspond to the movement produced by their associated primary interaction. Signatures thus encode spatial properties of primary interactions, that are exploited to detect distant affordances.}
+%\label{fig}
+%\end{figure}
 
 
 
 
-We then let the agent behaves in its environment, driven by the signature learning mechanism. Signature of bump emerges and stabilizes in nearly 5000 simulation step. The signature is similar to signature obtained in static environments, and associates the success of bump to the presence of 'seeing a green element in the position in front of the agent', and of a previously enacted 'bump'. The signature gathered these interactions, even through they are associated to different primary interactions. %, showing how a signature can gather multiple sensory modalities.
 
-Signatures of secondary interactions related to static elements (seeing red and seeing green) progressively stabilize, depending of they frequency of occurrence. After 50 000 simulation steps, most of these signatures stabilized. They designate elements of the same color but on a different position in space. From an external point of view, the spatial offset between the visual secondary interaction and the element designated by its signature matches the movement performed by the enation of its associated primary interaction. This property is used for signature projection and distant affordance detection [ ] (details in Section IV).
+We then let the agent behaves in its environment, driven by the signature learning mechanism. Signature of bump emerges and stabilizes in nearly 5000 simulation step. The signature is similar to signature obtained in static environments [ ], and associates the success of bump to the presence of 'seeing a green element in the position in front of the agent', and of a previously enacted 'bump'. The signature gathered these interactions, even through they are associated to different primary interactions. %, showing how a signature can gather multiple sensory modalities.
+
+Signatures of secondary interactions related to static elements (seeing red and seeing green) progressively stabilize, depending of they frequency of occurrence. After 50 000 simulation steps, most of these signatures stabilized. These signatures are also similar to signatures obtained in static environments [ ]. They designate elements of the same color but on a different position in space. From an external point of view, the spatial offset between the visual secondary interaction and the element designated by its signature matches the movement performed by the enation of its associated primary interaction. This property is used for signature projection and distant affordance detection [ ] (details in Section IV).
 
 Signatures of interactions related to mobile elements require more steps, as they relate to a larger variety of contexts to identify: at least 45 000 steps are required to identify contexts affording eat and move forward. Signature of interaction eat characterizes five contexts corresponding to the five positions of fish that can lead to a success of eat. Note that the position under the agent does not appear in contexts of interactions associated to move forward, as this situation is not possible. The signature of move forward has a negative weight $W$. The signature thus shows the affordance that prevents this interaction. The signature designates five contexts associated to the presence of a fish, and one context associated to the presence of a wall in front of the agent.
 
 %The signatures emerge within a similar number of interaction test than previously. Signature of interaction bump stabilizes in nearly 5000 simulation steps, and associates only one context characterizing the presence of a green object in front of the agent. Signature of interaction eat characterizes five contexts corresponding to the five positions of fish that can lead to a success of eat. Note that the position under the agent does not appear in contexts of interactions associated to move forward, as this situation is not possible. The signature of move forward has a negative weight $W$. The signature thus shows the affordance that prevents this interaction. The signature designates five contexts associated to the presence of a fish, and one context associated to the presence of a wall in front of the agent.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[scale=0.35]{img/sig_forward.png}}
-\caption{Signature of move forward, recorded after 100 000 simulation steps. Each column represents a neuron of the signature. The weight W is negative: the signature thus represents contexts preventing moving forward. The signature identifies as the affordance the presence of a green object in front of the agent, but also the presence of a blue object in front, two steps ahead, front-left, front-right, and below the agent. Note that a fish cannot be below the agent after forward or eat (as the fish is eaten), leaving only 5 contexts related to forward primary interaction, explaining low weights of the context of the fourth neuron. As eat interaction is rarely enacted, contexts related to this primary interaction are still constructing, although context related to the presence of a green object (on fourth neuron) in front is already formed.}
+\centerline{\includegraphics[scale=0.35]{img/sig_forward.pdf}}
+\caption{Signature of \textit{move forward}, recorded after 100 000 simulation steps. Each column represents a neuron of the signature. The weight W is negative: the signature thus represents contexts \textit{preventing} moving forward. The signature identifies six contexts, represented (from an external point of view) above. Note that a fish cannot be below the agent after forward or eat, leaving only 5 contexts related to forward primary interaction (greyed context has low weights and is thus unused by the signature). As eat interaction is rarely enacted, contexts related to this primary interaction (second line) are still constructing, although context related to the wall context is already formed on fourth neuron.}
 \label{fig}
 \end{figure}
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[scale=0.35]{img/sig_eat.png}}
-\caption{Signature of eat. The weight W is positive: the signature thus represents contexts affording eat. The signature identifies 5 configurations of fish (in front, two steps ahead, front-left, front-right, below), 4 in the case of a move forward (as below configuration cannot be observed). In contexts with fish around the front position, we can observe the absence of a green or red element (dark blob) in front of the agent, as this would prevent the prey from moving in front of the agent.}
+\centerline{\includegraphics[scale=0.35]{img/sig_eat.pdf}}
+\caption{Signature of eat. The weight W is positive: the signature thus represents contexts affording eat. The signature identifies 5 configurations of fish (front, ahead, left, right, below), 4 in the case of a move forward (as below context cannot be observed). In contexts with fish around the front position, we can observe the absence of a green or red element (dark blob) in front of the agent, as this would prevent the prey from moving in front of the agent.}
 \label{fig}
 \end{figure}
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.35]{img/sig_blue.pdf}}
 \caption{Signature of secondary interaction seeing a blue element at the position identified with a red square, while moving forward. The weight W is positive. The signature identifies 5 configurations of fish (in front, two steps ahead, front-left, front-right, below). The signature also indicates the absence of an element that would prevent the fish from moving on the right place, but also elements that could hide the fish (dark blobs).}
-\label{fig}
+\label{fig:sigblue}
 \end{figure}
 
 Signatures of secondary interactions consisting in seeing blue elements designate five contexts, corresponding to the five positions leading to a success of these interactions.
 
-The probabilities of signature contexts related to fully predictible and non-predictible interactions are similar than previously. However, signatures designating probabilistic affordances have different probabilities for each context.
+%The probabilities of signature contexts related to fully predictible and non-predictible interactions are similar than previously. However, signatures designating probabilistic affordances have different probabilities for each context.
 
-DEFINIR MOYENNES OU EXPLICITER RESULTATS ? MOYENNE PAR CONTEXTE
+We also analyze the ratio of successful enaction after a prediction of success. The ratios obtained in contexts implying static objects (such as walls) are close to 1: this indicates that the presence of this type of affordance implies the success of the interaction. Ratios obtained in contexts implying mobile fishes are close to 20\%, which correspond to the probability that the fish move in the right direction allowing the agent to eat it. The contexts with a fish in front of the agent is however slightly greater. This can be explained by the fact a prey cannot move a a different position when blocked by a wall or an alga, increasing the probability of eating the fish when in front of the agent.
+
 
 \begin{table}[htbp]
-\caption{Ratios of success when predict a success and failure when predict a failure}
+\caption{Average ratios of success when predict a success and failure when predict a failure in each type of context (wall, fish in front, fish in other positions (surrounding)}
 \begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
+\begin{tabular}{|c|c|c|}
 \hline 
-\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
+\textbf{interaction} & \textbf{\textit{ratio of success}}& \textbf{\textit{ratio of failure}} \\
 \hline
-copy& More table copy$^{\mathrm{a}}$& &  \\
+forward (wall)& 0.96 &  0.999 \\
+\hline
+forward (front)& 0.25& 0.999 \\
+\hline
+forward ('surrounding')& 0.19 & 0.999 \\
+\hline
+bump (wall)& 0.97 & 0.999 \\
+\hline
+eat (front)& 0.24 & 0.999 \\
+\hline
+eat ('surrounding')& 0.19 & 0.999 \\
+\hline
+seeing blue (Fig. \ref{fig:sigblue}) (middle)& 0.24 & 0.999 \\
+\hline
+seeing blue (Fig. \ref{fig:sigblue}) ('surround.')& 0.18 & 0.999 \\
 \hline
 \end{tabular}
 \label{tab1}
@@ -515,230 +554,8 @@ We will also implement these mechanisms in multi-agent contexts, to study the mu
 %- étude de comportements collaboratifs\newline
 %- possibilité de prédire les interactions d'autres agents à partir de leur contextes propres (changement de référentiel)\newline
 
-\begin{thebibliography}{00}
 
-\bibitem{chemero:affordance}
-A. Chemero, ``An outline of a theory of affordances,'' Ecological Psychology, vol. 15(2), pp. 181--195, 2003.
-
-\bibitem{gay:dynamic}
-S.~L. Gay and S.~Hassas, ``Autonomous object modeling based on affordances in a dynamic environment,''
-Biologically Inspired Cognitive Architecture, pp. 150--156, 2015.
-
-\bibitem{georgeon:radical}
-O.~L. Georgeon and D.~Aha, ``The Radical Interactionism Conceptual Commitment'',
-Journal of Artificial General Intelligence, vol. 4(2), pp. 31--36, 2013.
-
-\bibitem{georgeon:motivation}
-O.~L. Georgeon, J.~B Marshall, and S. Gay, ``Interactional motivation in artificial systems: between extrinsic and intrinsic motivation,'' International Conference on Development and Learning, and on Epigenetic Robotics, 2012. 
-
-\bibitem{georgeon:designing}
-O.~L. Georgeon and I.~Sakellariou, ``Designing Environment-Agnostic Agents,'' 
-Adaptive Learning Agents, workshop AAMAS 2012, pp. 25--32, 2012.
-
-\bibitem{gibson:affordances}
-J.~J. Gibson, ``The theory of affordances,''
-in Perceiving, Acting, and Knowing: Toward an Ecological Psychology, R. Shaw and J. Bransford, Eds. Hillsdale, pp. 67--82, 1977.
-
-\bibitem{harnad:grounding}
-S.~Harnad, ``The symbol grounding problem,'' 
-Physica D(42), pp. 335--346,1990.
-
-\bibitem{oudeyer:motivation}
-P.~Y. Oudeyer, F.~ Kaplan, and V.~V. Hafner, ``Intrinsic Motivation Systems for Autonomous Mental Development,'' 
-IEEE Transactions on Evolutionary Computation, vol. 11(2), pp. 265--286, 2007.
-
-\bibitem{piaget:reality}
-J.~Piaget, ``The construction of reality in the child,'' New York: Basic Books, 1937/1954.
-
-\bibitem{stoffregen:affordance}
-T. A. Stoffregen, ``Affordances as properties of the animal environment
-system,'' Ecological Psychology, vol. 15(2), pp. 115-134, 2003.
-
-
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
-\bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
-\bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
-\bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
-\bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
-\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
-\end{thebibliography}
-
-\newpage
-
-%
-%\subsection{Equations}
-%Number equations consecutively. To make your 
-%equations more compact, you may use the solidus (~/~), the exp function, or 
-%appropriate exponents. Italicize Roman symbols for quantities and variables, 
-%but not Greek symbols. Use a long dash rather than a hyphen for a minus 
-%sign. Punctuate equations with commas or periods when they are part of a 
-%sentence, as in:
-%\begin{equation}
-%a+b=\gamma\label{eq}
-%\end{equation}
-%
-%Be sure that the 
-%symbols in your equation have been defined before or immediately following 
-%the equation. Use ``\eqref{eq}'', not ``Eq.~\eqref{eq}'' or ``equation \eqref{eq}'', except at 
-%the beginning of a sentence: ``Equation \eqref{eq} is . . .''
-%
-%\subsection{\LaTeX-Specific Advice}
-%
-%Please use ``soft'' (e.g., \verb|\eqref{Eq}|) cross references instead
-%of ``hard'' references (e.g., \verb|(1)|). That will make it possible
-%to combine sections, add equations, or change the order of figures or
-%citations without having to go through the file line by line.
-%
-%Please don't use the \verb|{eqnarray}| equation environment. Use
-%\verb|{align}| or \verb|{IEEEeqnarray}| instead. The \verb|{eqnarray}|
-%environment leaves unsightly spaces around relation symbols.
-%
-%Please note that the \verb|{subequations}| environment in {\LaTeX}
-%will increment the main equation counter even when there are no
-%equation numbers displayed. If you forget that, you might write an
-%article in which the equation numbers skip from (17) to (20), causing
-%the copy editors to wonder if you've discovered a new method of
-%counting.
-%
-%{\BibTeX} does not work by magic. It doesn't get the bibliographic
-%data from thin air but from .bib files. If you use {\BibTeX} to produce a
-%bibliography you must send the .bib files. 
-%
-%{\LaTeX} can't read your mind. If you assign the same label to a
-%subsubsection and a table, you might find that Table I has been cross
-%referenced as Table IV-B3. 
-%
-%{\LaTeX} does not have precognitive abilities. If you put a
-%\verb|\label| command before the command that updates the counter it's
-%supposed to be using, the label will pick up the last counter to be
-%cross referenced instead. In particular, a \verb|\label| command
-%should not go before the caption of a figure or a table.
-%
-%Do not use \verb|\nonumber| inside the \verb|{array}| environment. It
-%will not stop equation numbers inside \verb|{array}| (there won't be
-%any anyway) and it might stop a wanted equation number in the
-%surrounding equation.
-%
-%\subsection{Some Common Mistakes}\label{SCM}
-%\begin{itemize}
-%\item The word ``data'' is plural, not singular.
-%\item The subscript for the permeability of vacuum $\mu_{0}$, and other common scientific constants, is zero with subscript formatting, not a lowercase letter ``o''.
-%\item In American English, commas, semicolons, periods, question and exclamation marks are located within quotation marks only when a complete thought or name is cited, such as a title or full quotation. When quotation marks are used, instead of a bold or italic typeface, to highlight a word or phrase, punctuation should appear outside of the quotation marks. A parenthetical phrase or statement at the end of a sentence is punctuated outside of the closing parenthesis (like this). (A parenthetical sentence is punctuated within the parentheses.)
-%\item A graph within a graph is an ``inset'', not an ``insert''. The word alternatively is preferred to the word ``alternately'' (unless you really mean something that alternates).
-%\item Do not use the word ``essentially'' to mean ``approximately'' or ``effectively''.
-%\item In your paper title, if the words ``that uses'' can accurately replace the word ``using'', capitalize the ``u''; if not, keep using lower-cased.
-%\item Be aware of the different meanings of the homophones ``affect'' and ``effect'', ``complement'' and ``compliment'', ``discreet'' and ``discrete'', ``principal'' and ``principle''.
-%\item Do not confuse ``imply'' and ``infer''.
-%\item The prefix ``non'' is not a word; it should be joined to the word it modifies, usually without a hyphen.
-%\item There is no period after the ``et'' in the Latin abbreviation ``et al.''.
-%\item The abbreviation ``i.e.'' means ``that is'', and the abbreviation ``e.g.'' means ``for example''.
-%\end{itemize}
-%An excellent style manual for science writers is \cite{b7}.
-%
-%\subsection{Authors and Affiliations}
-%\textbf{The class file is designed for, but not limited to, six authors.} A 
-%minimum of one author is required for all conference articles. Author names 
-%should be listed starting from left to right and then moving down to the 
-%next line. This is the author sequence that will be used in future citations 
-%and by indexing services. Names should not be listed in columns nor group by 
-%affiliation. Please keep your affiliations as succinct as possible (for 
-%example, do not differentiate among departments of the same organization).
-%
-%\subsection{Identify the Headings}
-%Headings, or heads, are organizational devices that guide the reader through 
-%your paper. There are two types: component heads and text heads.
-%
-%Component heads identify the different components of your paper and are not 
-%topically subordinate to each other. Examples include Acknowledgments and 
-%References and, for these, the correct style to use is ``Heading 5''. Use 
-%``figure caption'' for your Figure captions, and ``table head'' for your 
-%table title. Run-in heads, such as ``Abstract'', will require you to apply a 
-%style (in this case, italic) in addition to the style provided by the drop 
-%down menu to differentiate the head from the text.
-%
-%Text heads organize the topics on a relational, hierarchical basis. For 
-%example, the paper title is the primary text head because all subsequent 
-%material relates and elaborates on this one topic. If there are two or more 
-%sub-topics, the next level head (uppercase Roman numerals) should be used 
-%and, conversely, if there are not at least two sub-topics, then no subheads 
-%should be introduced.
-%
-%\subsection{Figures and Tables}
-%\paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
-%bottom of columns. Avoid placing them in the middle of columns. Large 
-%figures and tables may span across both columns. Figure captions should be 
-%below the figures; table heads should appear above the tables. Insert 
-%figures and tables after they are cited in the text. Use the abbreviation 
-%``Fig.~\ref{fig}'', even at the beginning of a sentence.
-%
-%\begin{table}[htbp]
-%\caption{Table Type Styles}
-%\begin{center}
-%\begin{tabular}{|c|c|c|c|}
-%\hline
-%\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
-%\cline{2-4} 
-%\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
-%\hline
-%copy& More table copy$^{\mathrm{a}}$& &  \\
-%\hline
-%\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
-%\end{tabular}
-%\label{tab1}
-%\end{center}
-%\end{table}
-%
-%
-%Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
-%rather than symbols or abbreviations when writing Figure axis labels to 
-%avoid confusing the reader. As an example, write the quantity 
-%``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
-%units in the label, present them within parentheses. Do not label axes only 
-%with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
-%\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
-%quantities and units. For example, write ``Temperature (K)'', not 
-%``Temperature/K''.
-%
-%\section*{Acknowledgment}
-%
-%The preferred spelling of the word ``acknowledgment'' in America is without 
-%an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B. 
-%G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor 
-%acknowledgments in the unnumbered footnote on the first page.
-%
-%\section*{References}
-%
-%Please number citations consecutively within brackets \cite{b1}. The 
-%sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference 
-%number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at 
-%the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
-%
-%Number footnotes separately in superscripts. Place the actual footnote at 
-%the bottom of the column in which it was cited. Do not put footnotes in the 
-%abstract or reference list. Use letters for table footnotes.
-%
-%Unless there are six authors or more give all authors' names; do not use 
-%``et al.''. Papers that have not been published, even if they have been 
-%submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers 
-%that have been accepted for publication should be cited as ``in press'' \cite{b5}. 
-%Capitalize only the first word in a paper title, except for proper nouns and 
-%element symbols.
-%
-%For papers published in translation journals, please give the English 
-%citation first, followed by the original foreign-language citation \cite{b6}.
-%
-%\begin{thebibliography}{00}
-%\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-%\bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
-%\bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
-%\bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
-%\bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
-%\bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
-%\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
-%\end{thebibliography}
-%\vspace{12pt}
-%\color{red}
-%IEEE conference templates contain guidance text for composing and formatting conference papers. Please ensure that all template text is removed from your conference paper prior to submission to the conference. Failure to remove the template text from your paper may result in your paper not being published.
+\bibliographystyle{IEEEbib}
+\bibliography{refs}
 
 \end{document}
