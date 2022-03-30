@@ -106,12 +106,12 @@ Otherwise, the tentative enaction of $i_t$ was a failure.
 For example, the agent actually enacted another interaction consisting in bumping into an obstacle, which may have a negative valence.
 An RI agent learns to anticipate the results of its interactions, and tries to enact interactions that have high valences.
 
-To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model which allows the simultaneous enaction of multiple interactions. At the end of step $t$, the agent receives a set $E_t=\{e_1, ..., e_k\}_t \subset I$ of $k$ enacted interactions instead of a single enacted interaction. 
+To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model which allows the simultaneous enaction of multiple interactions. At the end of step $t$, the agent receives a set $E_t=\{e_{1,t},..., e_{k,t}\} \subset I$ of $k$ enacted interactions instead of a single enacted interaction. 
 For example, when the agent is moving, each enacted interaction can reflect the relative displacement of a salient point in the visual field. 
 This allows the computation of optical flow used to infer the agent's displacements.  
 
 Previous PRI experiments showed that the agent was able to discover and recognize static objects through the visual interactions that they afforded (relative displacement of salient points). 
-The agent learned to localize distant affordances (possibilities of enacting an interaction), and to store and keep track of them in an emergent structure that played the role of spatial memory. 
+The agent learned to localize distant affordances (possibilities of enacting an interaction, \cite{gibson:affordances}), and to store and keep track of them in an emergent structure that played the role of spatial memory. 
 The agent generated an implicit context in spatial memory, and used it to generate behaviors in accordance with its interactional motivation. 
 A subsequent model also showed the possibility to identify objects that moved in a straight line, by considering sequences of consecutive interactions \cite{gay:dynamic}. 
 These models, however, worked poorly with entities that made random movements (other agents), because it was not possible to associate the presence of an observed entity with a specific affordance. The present study addresses this limitation.
@@ -123,9 +123,12 @@ These models, however, worked poorly with entities that made random movements (o
 
 %The signature mechanism proposed in this section propose to cope with the probabilistic affordance problem by separating the certitude of presence of the signature and the probability of success of the associated interaction.
 
-This section describe and formalize the machanisms for defining and recognizing affordances of interactions, called signature mechanism, and its adaptations for probabilistic affordances.
+This section describes and formalizes the mechanisms for defining and recognizing affordances of interactions, called the \textit{signature mechanism}, and its adaptations to probabilistic affordances.
 
-The signature mechanism is based on the assumption that the result of enacting an interaction depends on a limited context of elements in the environment. Such contexts thus relates to the concept of affordances proposed by Gibson \cite{gibson:affordances}, and especially the formalization given by Chemero \cite{chemero:affordance} and Stoffregen \cite{stoffregen:affordance}, who consider an affordance as a property emerging from the agent-environment coupling. As a PRI agent can only perceive its environment through enacted interactions, we define the signature $S_i$ of an interaction $i$ as structure, learned through experience, characterizing one (or more) ensemble(s) of interactions $\{j_k\}$ whose enaction (i.e. $\{j_k\} \subset E_t$) can characterize the presence of the element affording $i$, and thus, the enactability of $i$.  This approach addresses the knowledge grounding problem \cite{harnad:grounding} by letting knowledge of objects arise from experience.
+The signature mechanism is based on the assumption that the result of enacting an interaction depends on a limited context of elements in the environment. Such contexts thus relates to the concept of affordances proposed by Gibson and further formalized by Chemero \cite{chemero:affordance} and Stoffregen \cite{stoffregen:affordance}.
+They consider an affordance as a property emerging from the agent-environment coupling. 
+As a PRI agent can only perceive its environment through enacted interactions, we define the signature $S_i$ of an interaction $i$ as structure, learned through experience, characterizing one (or more) ensemble(s) of interactions $\{j_k\}$ whose enaction (i.e. $\{j_k\} \subset E_t$) can characterize the presence of the element affording $i$, and thus, the enactability of $i$. 
+This approach addresses the knowledge grounding problem \cite{harnad:grounding} by letting knowledge of objects arise from experience.
 
 Formally, a signature is a function $S_i : \mathcal{P}(I) \rightarrow [-1;1]$, where $\mathcal{P}(I)$ is the partition of possible contexts, that gives a numerical value in $[-1, 1]$ that reflects the possibility of successfully enacting $i$ in an interactional context $E$ (1 for an absolute certainty of success and -1 for an absolute certainty of failure). $S_i$ is learned and reinforced when $i$ succeeds or fails to generate accurate predictions. %Previous implementations of signatures used formal neurons [ ] or discrete ensembles of interactions [ ].
 
