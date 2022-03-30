@@ -258,13 +258,13 @@ where the interactional context $E_t$ takes the form of a vector of size $Card(I
 
 Then, the response of the group is defined as the maximum output, and remapped to a range in $[-1;1]$:
 \begin{equation}
-N_i(E)~=~max_k (N_i^k(E_t) ) \: \times \: 2 ~+~ 1
+N_i(E_t)~=~max_k (N_i^k(E_t) ) \: \times \: 2 ~+~ 1
 \end{equation}
 In order to consider interactions that are afforded by the absence of their affordance instead of their presence, we added an output weight $W_i$ defining the output of the signature:
 \begin{equation}
 S_i(E_t)~=~N_i(E_t) \times W_i
 \end{equation}
-The weight $W_i$ is restrained in the interval $[-1,1]$, allowing to inverse the result of the prediction, which makes neurons integrating contexts preventing the enaction of $i$.
+The weight $W_i$ is restrained in the interval $[-1,1]$, allowing to inverse the result of the prediction, which makes neurons able to integrate contexts preventing the enaction of $i$.
 
 The learning process uses a classical gradient descent:
 
@@ -274,13 +274,13 @@ The learning process uses a classical gradient descent:
 
 - The weight $W_i$ is updated as follow:
 
-$W^i ~\Leftarrow~ W^i+ \Delta^i * (\alpha * N^i - \alpha /2)$, ~with $\Delta^i=R_t-S_i(E_t)$
+$W_i ~\Leftarrow~ W_i+ \Delta^i . (\alpha * N_i - \alpha /2)$, ~with $\Delta^i=R_t-S_i(E_t)$
 and $\alpha$ the learning rate.
 
 - In case of a success, only the neuron with higher output is reinforced, all neurons are reinforced in case of failure:
 
-$W_{max}^i ~\Leftarrow~ W_k^i+ \Delta_k^i * N_k^i$,
-with $\Delta_k^i=(R_t*W_i + 1)/2 - N_k^i$
+$W_k^i ~\Leftarrow~ W_k^i+ \alpha . \Delta_k^i . N_k^i$,
+with $\Delta_k^i=(R_t.W_i + 1)/2 - N_k^i$
 
 
 %Note that the principle described in Section III-A is applied. 
@@ -291,7 +291,7 @@ To increase the specialization of neurons, in case of a success, weights of the 
 A consequence of this implementation is that high weights of neurons characterize contexts affording an interaction. It is also possible to consider weighs of a neuron by primary interaction, each group containing a weight related to a primary interaction and weights related to its associated secondary interaction. Thus, a signature $S_i$ can be subdivided into minimal contexts $C_{j,n}^{S_i}$, associated to a primary interaction $j$ and a neuron $n$. It is then possible to define the ratio of success $p_{j,n}^{s,i}$ and of failure $p_{j,n}^{f,i}$ of each context individually by updating them when primary interaction $j$ is enacted and neuron $n$ has the highest activity, and $S_i(E_t)<\overline{S_i^s}$ or $S_i(E_t)>\overline{S_i^f}$.
 
 \begin{figure}[htbp]
-\centerline{\includegraphics[scale=0.7]{img/signature_model.pdf}}
+\centerline{\includegraphics[scale=0.7]{img/signature_model2.pdf}}
 \caption{Signature architecture based on multiple neurons. As the signature output relies on the neuron with greatest output, neurons are in competitions with each other, leading to a specialisation of each neuron for a specific context. The last function remaps the output to range $[-1;1]$ and uses a global weight $W_i$, that can inverse the signature result, allowing the representation of contexts preventing the enaction of an interaction.}
 \label{fig}
 \end{figure}
@@ -368,19 +368,19 @@ Signatures of interactions related to mobile elements require more steps, as the
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.35]{img/sig_forward.pdf}}
-\caption{Signature of \textit{move forward}, recorded after 100 000 simulation steps. Each column represents a neuron of the signature. The weight W is negative: the signature thus represents contexts \textit{preventing} moving forward. The signature identifies six contexts, represented (from an external point of view) above. Note that a fish cannot be below the agent after forward or eat, leaving only 5 contexts related to forward primary interaction (greyed context has low weights and is thus unused by the signature). As eat interaction is rarely enacted, contexts related to this primary interaction (second line) are still constructing, although context related to the wall context is already formed on fourth neuron.}
+\caption{Signature of \textit{move forward}, recorded after 100 000 simulation steps. Each column represents a neuron of the signature. The weight W is negative: the signature thus represents contexts \textit{preventing} moving forward. The signature identifies six contexts, represented (from an external point of view) above. As a fish cannot be below the agent after forward or eat, only 5 contexts are related to forward primary interaction (greyed context has low weights and is thus unused by the signature). As eat interaction is rarely enacted, contexts related to this primary interaction (second line) are still constructing, although context related to the wall context is already formed on fourth neuron.}
 \label{fig}
 \end{figure}
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.35]{img/sig_eat.pdf}}
-\caption{Signature of eat. The weight W is positive: the signature thus represents contexts affording eat. The signature identifies 5 configurations of fish (front, ahead, left, right, below), 4 in the case of a move forward (as below context cannot be observed). In contexts with fish around the front position, we can observe the absence of a green or red element (dark blob) in front of the agent, as this would prevent the prey from moving in front of the agent.}
+\caption{Signature of eat. The weight W is positive: the signature thus represents contexts affording eat. The signature identifies 5 configurations of fish (front, ahead, left, right, below), 4 in the case of a move forward (as below context cannot be observed). In contexts with fish around front position, we can observe the absence of a green or red element (dark blob) in front of the agent, as this would prevent the prey from moving to this position.}
 \label{fig}
 \end{figure}
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.35]{img/sig_blue.pdf}}
-\caption{Signature of secondary interaction seeing a blue element at the position identified with a red square, while moving forward. The weight W is positive. The signature identifies 5 configurations of fish (in front, two steps ahead, front-left, front-right, below). The signature also indicates the absence of an element that would prevent the fish from moving on the right place, but also elements that could hide the fish (dark blobs).}
+\caption{Signature of secondary interaction seeing a blue element at the position identified with a red square, while moving forward. The weight W is positive. The signature identifies 5 configurations of fish. The signature also indicates the absence of an element that would prevent the fish from moving on the right place, but also elements that could hide the fish (dark blobs).}
 \label{fig:sigblue}
 \end{figure}
 
@@ -429,7 +429,7 @@ The detection of distant affordances relies on a property of signatures as defin
 However, each interaction $j_k$ can have its own signature, and each context $C_l=\{j_k\}$ affording $i$ is composed of interactions $j_k$ related to the same primary interaction $j$. The backmove principle thus propose to \textit{project} a signature $S_i$ through a primary interaction $j$ using the following procedure: we note $\hat{S}_i^{\sigma_0} = \hat{S}_i(1)$, where $\sigma_0$ is an empty sequence of interactions, and construct:
 $\hat{S}_i^{[j,\sigma_0]}\!=\!\bigcup_{\forall C_l \in \hat{S}_i^{\sigma_0} / j \in C_l} \{E \in \mathcal{P}(I) / \forall j_k \in C_l, S_{j_k}(E)\!>\!0\}$, which characterizes contexts that can afford $i$ after enacting $j$.
 
-As this process can be repeated by considering $\sigma_{a+1}=[j,\sigma_a]$, it is possible to \textit{backmove} a signature $S_i$ by a sequence of interactions $\sigma$, to obtain a \textit{predecessor} of $i$, noted $S_i^\sigma$. A predecessor $S_i^\sigma$. characterizes a set of contexts $\hat{S}_i^\sigma$ that, if \textit{moved} through the enaction of the sequence of interactions $\sigma$, affords~$i$.
+As this process can be repeated by considering $\sigma_{a+1}=[j,\sigma_a]$, it is possible to \textit{backmove} a signature $S_i$ by a sequence of interactions $\sigma$, to obtain a \textit{predecessor} of $i$, noted $S_i^\sigma$. A predecessor $S_i^\sigma$. characterizes a set of contexts $\hat{S}_i^\sigma$ that, if \textit{moved} through the enaction of the sequence of interactions $\sigma$, affords~$i$. Then, when a predecessor $\hat{S}_i^\sigma$ is observed in the context $E_t$, a distant affordance of $i$ is assumed to be present at a position characterized by sequence $\sigma$, in egocentric reference.
 
 %- principe du proto-objet\newline
 
@@ -437,11 +437,10 @@ As this process can be repeated by considering $\sigma_{a+1}=[j,\sigma_a]$, it i
 
 \subsection{Backmoving a probabilistic affordance}
 
-Applying the backmove principle to a signature of a probabilistic affordances would generate a set of predecessor that cover all the possible future positions of this affordance after enacting a given sequence $\sigma$ the set of predecessor defining the position of the affordance as a 'probability wave' that extends while the sequence $\sigma$ is growing.
-
-A unique mobile element of the environment would thus be detected a set of different positions, whose 'probability waves' cover this element. However, this localization through multiple position cannot be exploited by the space memory architecture, as requires to consider affordances with unique positions in space.
-
-We thus propose to only consider predecessors that have the greatest probability, which defines the position of an affordance, for a given sequence $\sigma$, as the maximum of the 'probability wave'. 
+Applying the backmove principle to a signature of a probabilistic affordances would generate a set of predecessor that cover all the possible future positions of this affordance after enacting a given sequence $\sigma$. % the set of predecessor defining the position of the affordance as a 'probability wave' that extends while the sequence $\sigma$ is growing.
+A unique mobile element of the environment would thus be detected a set of different positions. %, whose 'probability waves' cover this element.
+However, this localization through multiple position cannot be exploited by the space memory architecture, as requires to consider affordances with unique positions in space.
+We thus propose to only consider predecessors that have the greatest probability, defining a unique position of an affordance in surrounding space. %, for a given sequence $\sigma$, as the maximum of the 'probability wave'.
 
 The proposed backmove method introduces a new structure, called projection sequence. The idea is to split predecessors into individual interactions: for each backmove, each sequence considers a unique interaction of $S_i^{\sigma}$. The predecessors can then be reconstructed by gathering projection sequences that have the same properties. %The projection sequences thus relate to the notion of proto-objects [ ] that consists in backmoving only a part of the signature to detect incomplete affordances and facilitates detection of distant affordances.
 
