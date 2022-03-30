@@ -100,21 +100,21 @@ Let $I$ be the set of predefined primitive interactions (pointers to predefined 
 At the beginning of step $t$, the agent selects an \textit{intended interaction} $i_t \in I$. 
 An example consists in moving forward for a predefined amount of time while detecting no obstacle.
 At the end of step $t$, the agent is informed of the \textit{enacted interaction} $e_t \in I$ that was actually enacted. 
-If $i_t = e_t$ then the enaction is a success. The agent did move forward without detecting an obstacle. 
+If $i_t = e_t$ then the enaction is a success. 
+The agent \textit{did} move forward without detecting an obstacle. 
 Otherwise, the tentative enaction of $i_t$ was a failure. 
 For example, the agent actually enacted another interaction consisting in bumping into an obstacle, which may have a negative valence.
-An RI agent learns to anticipate the results of its interactions, and tries to enact interactions that have a high valences.
+An RI agent learns to anticipate the results of its interactions, and tries to enact interactions that have high valences.
 
-In some studies \cite{}, we have extended the RI model to help discovering spatial regularities of the environment, by allowing the simultaneous enaction of multiple interactions. 
-The Parallel RI (PRI) considers additional stimuli that cannot be separated from the movement that produced them. 
-The optical flow is an example of such stimuli, that must be associated to a movement to characterize a unique position in space. 
-Thus, the PRI model considers \textit{primary} interactions as sensorimotor schemes (action,perception), and \textit{secondary} interactions as a couple (interaction, stimulus). 
-Formally, a PRI algorithm starts with a set I of interactions (primary and secondary). 
-At step t, the agent selects an intended interaction $i_t$, and is informed, at the end of step t of a set of interactions $E_t=\{e_k\}t$ that were enacted, consisting of a primary interaction and a set of secondary interactions associated to this primary interaction.
+To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model which allows the simultaneous enaction of multiple interactions. At the end of step $t$, the agent receives a set $E_t=\{e_1, ..., e_k\}_t \subset I$ of $k$ enacted interactions instead of a single enacted interaction. 
+For example, when the agent is moving, each enacted interaction can reflect the relative displacement of a salient point in the visual field. 
+This allows the computation of optical flow used to infer the agent's displacements.  
 
-Previous PRI architectures demonstrated the possibility, for an environmentally-agnostic agent, to define and recognize elements affording their interactions, to localize distant affordances, and to store and keep trace of them in an emergent structure, called space memory, allowing to generate an implicit context that is used to generate behaviors satisfying motivational principles. 
-
-A subsequent model also showed the possibility to integrate elements that move with a uniform movement, by considering sequences of at least two consecutive interactions \cite{gay:dynamic}. However, these models fail to integrate elements whose movement cannot be predicted, as it is not possible to associate the presence of an observed element to a specific affordance.
+Previous PRI experiments showed that the agent was able to discover and recognize static objects through the visual interactions that they afforded (relative displacement of salient points). 
+The agent learned to localize distant affordances (possibilities of enacting an interaction), and to store and keep track of them in an emergent structure that played the role of spatial memory. 
+The agent generated an implicit context in spatial memory, and used it to generate behaviors in accordance with its interactional motivation. 
+A subsequent model also showed the possibility to identify objects that moved in a straight line, by considering sequences of consecutive interactions \cite{gay:dynamic}. 
+These models, however, worked poorly with entities that made random movements (other agents), because it was not possible to associate the presence of an observed entity with a specific affordance. The present study addresses this limitation.
 
 %Next Sections III and IV present adaptation of mechanisms to define and recognize affordances, ant to localize distant affordances, in a form that is compatible with specifications of the space memory model.
 
