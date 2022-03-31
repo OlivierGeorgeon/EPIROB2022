@@ -106,7 +106,8 @@ Otherwise, the tentative enaction of $i_t$ was a failure.
 For example, the agent actually enacted another interaction consisting in bumping into an obstacle, which may have a negative valence.
 An RI agent learns to anticipate the results of its interactions, and tries to enact interactions that have high valences.
 
-To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model which allows the simultaneous enaction of multiple interactions. At the end of step $t$, the agent receives a set $E_t=\{e_{1,t},..., e_{k,t}\} \subset I$ of $k$ enacted interactions instead of a single enacted interaction. 
+To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model which allows the simultaneous enaction of multiple interactions. 
+At the end of step $t$, coinciding with the beginning of step $t+1$, the agent receives not one but a set of $k$ enacted interactions $E_{t+1}=\{e_1,..., e_k\} \subset I$. 
 For example, when the agent is moving, each enacted interaction can reflect the relative displacement of a salient point in the visual field. 
 This allows the computation of optical flow used to infer the agent's displacements.  
 
@@ -124,14 +125,14 @@ These models, however, worked poorly with entities that made random movements (o
 %The signature mechanism proposed in this section propose to cope with the probabilistic affordance problem by separating the certitude of presence of the signature and the probability of success of the associated interaction.
 
 This section explains the \textit{signature mechanism} by which the agent estimates the possibilities of enacting interactions in a given context. 
-If the experimental settings satisfy the Markov property, we can use the set $E_{t-1} \subset I$ of the interactions enacted at step $t-1$ to define the current context upon which the agent estimates the probability of success of future interactions. Otherwise, we must chain sequences of interactions to extend the temporal dependency. 
+If the experimental settings satisfy the Markov property, we can use the set $E_t \subset I$ of the interactions enacted during step $t-1$ to define the current context upon which the agent estimates the probability of success of future interactions. Otherwise, we must chain sequences of interactions to extend the temporal dependency. 
 
 
 %, and thus, the enactability of $i$.  This approach addresses the knowledge grounding problem \cite{harnad:grounding} by letting knowledge of objects arise from experience.
 
 Formally, a \textit{signature of interaction} is a function $S_i : \mathcal{P}(I) \rightarrow [-1;1]$, where $\mathcal{P}(I)$ is the partition of $I$, i.e., the set of all possible contexts.
-$S_i(E_{t-1}) \in [-1, 1]$ gives the estimated possibility of successfully enacting interaction $i$ at step $t$: 1 for certainty of success, -1 for certainty of failure. 
-To improve this estimation, the agent adjusts $S_i$ each time $i$ succeeds or fails. %Previous implementations of signatures used formal neurons [ ] or discrete ensembles of interactions [ ].
+$S_i(E_t) \in [-1, 1]$ gives the estimated possibility of successfully enacting interaction $i$ at step $t$: 1 for certainty of success, -1 for certainty of failure. 
+To improve this estimation, the agent adjusts $S_i(E)$ each time $i$ succeeds or fails in context $E$. %Previous implementations of signatures used formal neurons [ ] or discrete ensembles of interactions [ ].
 
 Our signatures of interaction are \textit{reversible} : they allow defining a reverse function $\hat{S}_i : \{-1;1\} \rightarrow \mathcal{P}(\mathcal{P}(I))$ such that $\hat{S}_i(-1)$ gives the set of minimal contexts in which the enaction of $i$ is impossible, and $\hat{S}_i(1)$ gives the set of minimal contexts in which it is possible, i.e., the contexts that \textit{afford} $i$. 
 We use the terms \textit{afford} and \textit{affordance} in compliance with Gibson's terminology, and with their formalization by Chemero \cite{chemero:affordance} and Stoffregen \cite{stoffregen:affordance}. 
@@ -144,7 +145,7 @@ We use the terms \textit{afford} and \textit{affordance} in compliance with Gibs
 
 
 However, when interacting with mobile entities, the presence of an affordance at the end of step $t-1$ does not guaranty that the interaction can be enacted during step $t$ because the entity may move in the meantime.
-To address this issue, this study separates the estimation of the presence of an affordance from the  estimation of the probability of success of enacting the interaction during the interaction step.
+To address this issue, this study separates the estimation of the affordance from the estimation of the probability of success.
 %, and then to differentiate multiple contexts that may lead to a success of the interaction.
 
 %Before you begin to format your paper, first write and save the content as a
@@ -156,19 +157,24 @@ To address this issue, this study separates the estimation of the presence of an
 %formatted and styled. Do not number text heads---{\LaTeX} will do that
 %for you.
 
-\subsection{Separating certainty and probability}\label{AA}
+\subsection{Separating affordance from probability of success}\label{AA}
 
-When the agent tests an interaction, three cases can be defined from an external observer's perspective:
+From the observer's perspective, three types of situations can happen when the agent tries an interaction:
 \begin{enumerate}
-\item The affordance is present at the right place, and the agent can enact the interaction successfully. (e.g. a prey is in front of the agent, and the agent could catch the prey).
-\item The affordance is present, but the interaction fails. (e.g. a prey is i front of the agent, but the prey moved and the agent missed catching the prey).
-\item The affordance is absent, leading to a failure of the interaction. (e.g. there is no prey in front of the agent, leading to a certain failure of catching a prey).
+\item The affordance is present at the right place, and the agent enacts the interaction successfully (e.g. a prey is in front of the agent, and the agent catches the prey).
+\item The affordance is present, but the interaction fails (e.g. a prey is in front of the agent, but the prey moves and the agent fails to catch it).
+\item The affordance is absent, leading to a failure of the interaction (e.g. there is not pray in front of the agent, but the agent tries to catch one and fails).
 \end{enumerate}
-From the agent's perspective, the results of situations 2 and~3 cannot be distinguished, as they have the same result. Moreover, situations 2 prevents the construction of the signature.
+From the agent's perspective, situations of types 1 and 2 can occur in the same context $E$.
+%situations of type 2 and~3 cannot be distinguished: the agent fails to evaluate the affordance and to catch the pray. Moreover, 
+The existence of situations of type 2 distorts the learning of signatures, causing the prediction $S_i(E)$ to remain negative even when the affordance is effectively present.
 %, and thus the possibility to distinguish situations 1 and 2 from situations 3.
-However, our preliminary tests showed an interesting results: despite remaining negative due to situations 2, the signature predictions are slightly higher in case of situations 1-2 than in situations 3. Indeed, the existence of situations 1 influence the signature, allowing the context of interactions corresponding to the affordance to emerge while remaining insufficient to predict with a positive value.
+We nonetheless observed that, although negative, the prediction remained slightly higher than when the affordance was absent due to the existence of situations of type 1. 
+%influence the signature, allowing the context of interactions corresponding to the affordance to emerge while remaining insufficient to predict with a positive value.
 
-From this observation, we propose to use the average prediction in case of failure $\overline{S_i^f}$ as a threshold to distinguish situations 2 and 3 after a failure. Then, when the interaction failed in an assumed situation 2 (i.e. $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limit the influence of situations 2 in signature construction. This principle is applied when $\overline{S_i^f}$ is lower than a threshold, assuming that the signature started to emerge (we used a threshold of -0.9).
+From this observation, we propose to use the average prediction in case of failure $\overline{S_i}^f$ as a threshold to distinguish situations 2 and 3 after a failure. 
+Then, when the interaction failed in an assumed situation 2 (i.e. $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limits the influence of situations 2 in signature construction. 
+This principle is applied when $\overline{S_i^f}$ is lower than a threshold, assuming that the signature started to emerge (we used a threshold of -0.9).
 
 %The average value of negative predictions is evaluated using:
 %\begin{equation}
