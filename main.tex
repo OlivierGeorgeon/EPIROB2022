@@ -107,7 +107,7 @@ For example, the agent actually enacted another interaction consisting in bumpin
 An RI agent learns to anticipate the results of its interactions, and tries to enact interactions that have high valences.
 
 To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model which allows the simultaneous enaction of multiple interactions. 
-At the end of step $t$, coinciding with the beginning of step $t+1$, the agent receives not one but a set of $k$ enacted interactions $E_{t+1}=\{e_1,..., e_k\} \subset I$. 
+At the end of step $t$, coinciding with the beginning of step $t+1$, the agent receives, not one, but a set of $k$ enacted interactions $E_{t+1}=\{e_{1,t},..., e_{k,t}\} \subset I$. 
 For example, when the agent is moving, each enacted interaction can reflect the relative displacement of a salient point in the visual field. 
 This allows the computation of optical flow used to infer the agent's displacements.  
 
@@ -157,23 +157,23 @@ To address this issue, this study separates the estimation of the affordance fro
 %formatted and styled. Do not number text heads---{\LaTeX} will do that
 %for you.
 
-\subsection{Separating affordance from probability of success}\label{AA}
+\subsection{Separating affordances from probability of success}\label{AA}
 
 From the observer's perspective, three types of situations can happen when the agent tries an interaction:
 \begin{enumerate}
-\item The affordance is present at the right place, and the agent enacts the interaction successfully (e.g. a prey is in front of the agent, and the agent catches the prey).
-\item The affordance is present, but the interaction fails (e.g. a prey is in front of the agent, but the prey moves and the agent fails to catch it).
-\item The affordance is absent, leading to a failure of the interaction (e.g. there is not pray in front of the agent, but the agent tries to catch one and fails).
+\item The affordance is present at the right place, and the agent enacts the interaction successfully (e.g., a prey is in front of the agent, and the agent catches the prey).
+\item The affordance is present, but the interaction fails (e.g., a prey is in front of the agent, but the prey moves and the agent fails to catch it).
+\item The affordance is absent, leading to a failure of the interaction (e.g., there is not pray in front of the agent, but the agent tries to catch one and fails).
 \end{enumerate}
 From the agent's perspective, situations of types 1 and 2 can occur in the same context $E$.
 %situations of type 2 and~3 cannot be distinguished: the agent fails to evaluate the affordance and to catch the pray. Moreover, 
-The existence of situations of type 2 distorts the learning of signatures, causing the prediction $S_i(E)$ to remain negative even when the affordance is effectively present.
+The existence of situations of type 2 distorts the learning of signatures, causing the prediction $S_i(E)$ to remain negative even though the affordance is effectively present.
 %, and thus the possibility to distinguish situations 1 and 2 from situations 3.
 We nonetheless observed that, although negative, the prediction remained slightly higher than when the affordance was absent due to the existence of situations of type 1. 
 %influence the signature, allowing the context of interactions corresponding to the affordance to emerge while remaining insufficient to predict with a positive value.
 
-From this observation, we propose to use the average prediction in case of failure $\overline{S_i}^f$ as a threshold to distinguish situations 2 and 3 after a failure. 
-Then, when the interaction failed in an assumed situation 2 (i.e. $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limits the influence of situations 2 in signature construction. 
+From this observation, we propose to use the average prediction in case of failure $\overline{S_i^f}$ as a threshold to distinguish between situations 2 and 3 after a failure. 
+When the interaction fails in an assumed situation 2 (i.e. $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limits the influence of situations 2 in signature construction. 
 This principle is applied when $\overline{S_i^f}$ is lower than a threshold, assuming that the signature started to emerge (we used a threshold of -0.9).
 
 %The average value of negative predictions is evaluated using:
@@ -183,12 +183,17 @@ This principle is applied when $\overline{S_i^f}$ is lower than a threshold, ass
 %Then, when the prediction $S(E_t)>\overline{S^-}$, the signature is not learned in case of failure. This principle thus decrease the influences of situations that are expected to be situation 2. %, allowing the construction of the signature. 
 %This principle is applied when the average prediction $\overline{S^-}$ is lower than a treshold (we used a value of -0.9), to let the context of interaction corresponding to the affordance starting to emerge in the signature.
 
-Several interactions can be prevented by the presence of an element (e.g. \textit{moving a step forward} is expected to success, until an obstacle appears). In such cases, situations 1' are related to the failure of the interaction, and situations 2' and 3' to its success. As situations 2' and 3' are expected to be more frequent than situations 1', the average of predictions will converge to a positive value. We thus used the average of positive predictions $\overline{S_i^s}$ as a threshold to prevent the signature reinforcement in case of success in an assumed situation 2' (i.e. $S_i(E_t)<\overline{S_i^s}$). This principle is applied when $\overline{S_i^s}$ is greater than a threshold (we used a threshold of 0.9).
+Symmetrically, some interactions may fail due to the unexpected apparition of an entity in a specific location (e.g., trying to move forward while an obstacle appears in front).
+Situations in which such interactions fail do not decrease the prediction of success if it is lower than the threshold of the average of positive predictions (i.e. $S_i(E_t)<\overline{S_i^s}$ if $\overline{S_i^s} > 0.9$).  
+
+%Several interactions can be prevented by the presence of an entity (e.g., \textit{moving a step forward} is expected to succeed, until an obstacle appears). In such cases, situations 1' are related to the failure of the interaction, and situations 2' and 3' to its success.  As situations 2' and 3' are expected to be more frequent than situations 1', the average of predictions will converge to a positive value.  We thus used the average of positive predictions $\overline{S_i^s}$ as a threshold to prevent the signature reinforcement in case of success in an assumed situation 2' (i.e. $S_i(E_t)<\overline{S_i^s}$).  This principle is applied when $\overline{S_i^s}$ is greater than a threshold (we used a threshold of 0.9).
 
 
 %and thus are expected to success when the affordance is absent, we also define the average value of positive predictions $\overline{S^s}$. When this average value is greater than a treshold (we used a value of 0.9), a prediction lower than $\overline{S^+}$ is not learned in case of success.
 
-It is also possible to define the ratio of interaction success when the prediction $S(E_t)$ is greater than the average $\overline{S^f}$ (or interaction failure when $S(E_t)$ is lower than the average $\overline{S^s}$), implying that the agent is in a situation of type 1 or 2 (or 1' or 2'). This ratio thus measures the probability that the presence of the affordance actually affords successfully the interaction.
+It is also possible to define the ratio of interaction success when the prediction $S(E_t)$ is greater than the average $\overline{S^f}$ (or interaction failure when $S(E_t)$ is lower than the average $\overline{S^s}$), implying that the agent is in a situation of type 1 or 2.
+% (or 1' or 2'). 
+This ratio thus measures the probability that the presence of the affordance actually affords successfully the interaction.
 
 
 
