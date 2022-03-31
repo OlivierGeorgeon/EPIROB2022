@@ -131,20 +131,20 @@ If the experimental settings satisfy the Markov property, we can use the set $E_
 
 Formally, a \textit{signature of interaction} is a function $S_i : \mathcal{P}(I) \rightarrow [-1;1]$, where $\mathcal{P}(I)$ is the partition of $I$, i.e., the set of all possible contexts.
 $S_i(E_{t-1}) \in [-1, 1]$ gives the estimated possibility of successfully enacting interaction $i$ at step $t$: 1 for certainty of success, -1 for certainty of failure. 
-The agent adjusts $S_i$ each time $i$ succeeds or fails to improve the estimation. %Previous implementations of signatures used formal neurons [ ] or discrete ensembles of interactions [ ].
+To improve this estimation, the agent adjusts $S_i$ each time $i$ succeeds or fails. %Previous implementations of signatures used formal neurons [ ] or discrete ensembles of interactions [ ].
 
-We say that a context \textit{affords} (or presents an \textit{affordance} for) interaction $i$ if it makes possible the successful enaction of $i$. 
-This terminology complies with Gibson's, and with further formalizations by Chemero \cite{chemero:affordance} and Stoffregen \cite{stoffregen:affordance}.
-A signature must be \textit{reversible} : it must be possible to define a function $\hat{S}_i : \{1;-1\} \rightarrow \mathcal{P}(\mathcal{P}(I))$ such that $\hat{S}_i(1)$ gives a set of contexts affording $i$, and $\hat{S}_i(-1)$ gives the set of contexts preventing the enaction of $i$.
-These sets of context should be \textit{minimal} (i.e. $\nexists E_1,\!E_2\!\in\!\hat{S}_i(x), x\!\in\!\{1;-1\} / E1\!\subset\!E2$). 
-We note $C_k^{S_i} \in S_i$ a minimal context affording $i$.
+Our signatures of interaction are \textit{reversible} : they allow defining a reverse function $\hat{S}_i : \{-1;1\} \rightarrow \mathcal{P}(\mathcal{P}(I))$ such that $\hat{S}_i(-1)$ gives the set of minimal contexts in which the enaction of $i$ is impossible, and $\hat{S}_i(1)$ gives the set of minimal contexts in which it is possible, i.e., the contexts that \textit{afford} $i$. 
+We use the terms \textit{afford} and \textit{affordance} in compliance with Gibson's terminology, and with their formalization by Chemero \cite{chemero:affordance} and Stoffregen \cite{stoffregen:affordance}. 
+%These sets of contexts should be \textit{minimal} (i.e. $\nexists E_1,\!E_2\!\in\!\hat{S}_i(x), x\!\in\!\{1;-1\} / E1\!\subset\!E2$). 
+%We note $C_k^{S_i} \in S_i$ a minimal context affording $i$.
 
 
 %The signature mechanism is based on the assumption that the result of enacting an interaction depends on a limited context of elements in the environment. Such contexts thus relates to the concept of affordances proposed by Gibson \cite{gibson:affordances}, and further formalization given by Chemero \cite{chemero:affordance} and Stoffregen \cite{stoffregen:affordance}.
 %They consider an affordance as a property emerging from the agent-environment coupling. 
 
 
-However, previous implementations fails to integrate probabilistic affordances, as the presence of the affordance may still lead to a failure of the interaction. We thus propose to first separate certainty of presence of affordance and probability of success.
+However, when interacting with mobile entities, the presence of an affordance at the end of step $t-1$ does not guaranty that the interaction can be enacted during step $t$ because the entity may move in the meantime.
+To address this issue, this study separates the estimation of the presence of an affordance from the  estimation of the probability of success of enacting the interaction during the interaction step.
 %, and then to differentiate multiple contexts that may lead to a success of the interaction.
 
 %Before you begin to format your paper, first write and save the content as a
