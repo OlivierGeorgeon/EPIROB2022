@@ -16,7 +16,7 @@
 %Learning to anticipate displacements of other agents
 %Probabilistic interactive learning of moving/mobile agents to foster intersubjectivity with other agents
 Discovering, recognizing, and localizing dynamic affordances to adapt to unknown agents
-\thanks{Identify applicable funding agency here. If none, delete this.}
+\thanks{This work is supported by the French National Research Agency in the framework of the "Investissements d’avenir” program (ANR-15-IDEX-02).}
 }
 
 \author{\IEEEauthorblockN{Simon L. Gay}
@@ -48,8 +48,9 @@ developmental learning, interactionism, affordance, autonomous mental developmen
 
 \section{Introduction}\label{intro}
 
-We address the problem of how an artificial agent that learns an emergent model of its environment through interaction can acquire knowledge about mobile entities that move freely in the environment (e.g., other agents). 
-We build upon our previous work that learned a model of fixed entities and their geometrical properties. The addition into the environment of entities that move according to their own rules makes the learning even more challenging.
+We address the problem of how an artificial agent that learns an emergent model of its environment through interaction can acquire knowledge about mobile entities that move freely in the environment (e.g., other agents).
+We build upon a previous work that learned a model of fixed entities. % and their geometrical properties.
+The addition into the environment of entities that move according to their own rules makes the learning even more challenging.
 
 %long term goal of the emergence of collaborative behaviors between artificial agent that initially ignores elements that compose its environment and geometrical properties of its environment. Such an agent can be defined as environment-agnostic [].
 %\newline
@@ -64,59 +65,68 @@ We build upon our previous work that learned a model of fixed entities and their
 %- introduction brève du DL, introduction du vocabulaire\newline
 
 This study is situated within the framework of artificial constructivist learning \cite{wang_new_2012} and enactive learning \cite{froese2009enactiveAI}. 
-In this framework, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget2013construction}.  
-We initialize the agent with a predefined set of control loops called \textit{primitive interactions}. 
-We associate each primitive interaction with a predefined numerical \textit{valence}.
-We design the agent's software so that the agent seeks to enact interactions that have positive valences, and to avoid enacting interactions that have negative valences. 
+In this framework, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget2013construction}, and called \textit{interactions}.
+%We initialize the agent with a predefined set of control loops called \textit{primitive interactions}.
+%We associate each primitive interaction with a predefined numerical \textit{valence}.
+%We design the agent's software so that the agent seeks to enact interactions that have positive valences, and to avoid enacting interactions that have negative valences.
+The agent starts with a predefined set of uninterpreted \textit{interactions} associated with predefined numerical \textit{valences}, and seeks to enact interactions with positive valences and avoids interactions with negative valences.
 Such software endows the agent with a kind of self motivation that we have called \textit{interactional motivation} \cite{georgeon_interactional_2012}.
 This view on self motivation relates to the notion of \textit{intrinsic motivation} of artificial agents for \textit{developmental learning} \cite{oudeyer_intrinsic_2007}.
 For a complete description, we refer the reader to our previous papers in which we have called this approach \textit{Radical Interactionism} (RI) \cite{georgeon:radical} and \textit{artificial interactionism} \cite{GuillerminGeorgeon2022}. 
 Overall, the learning is \textit{unsupervised}. 
-There are no human-defined labels attached with perceptions or with categories of entities, no pre-coded ontology of the world, no semantics associated with action data or sensory data.  
+%There are no human-defined labels attached with perceptions or with categories of entities, no pre-coded ontology of the world, no semantics associated with action data or sensory data.
+The agent has no \textit{a priori} knowledge on its perception nor on its environment.
+
 
 
 %The agent perceives and interprets its environment by identifying affordances [] rather than recognizing objects on the basis of predefined features. This approach addresses the knowledge grounding problem [] by letting knowledge of objects arise from experience.
 
-In designing agents that autonomously learn to interact with other agents, we pursue the long-term goal of allowing the emergence of collective behaviors within groups of artificial agents. Generating collective behaviors involving other agents requires overcoming two main problems:
+%In designing agents that autonomously learn to interact with other agents,
+Through this integration of mobile entities,
+we pursue the long-term goal of allowing the emergence of collective behaviors within groups of artificial agents. Generating such collective behaviors %involving other agents
+requires overcoming two main problems:
 
 1) learning to define, recognize and localize other agents that make individual movements in the environment,
 
-2) inferring the intentions of these other agents based on their own environmental contexts, which is related to the intersubjectvity problem.
+2) inferring the intentions of these other agents based on their own environmental contexts. %, which is related to the intersubjectvity problem.
 
 This paper focuses on the resolution of the first problem. 
-It is subdivided as follow: Section \ref{RI} summarizes and formalizes the Radical Interactionism model and the architecture constructing the environment model. Section \ref{signatures} presents a model for defining and recognizing probabilistic affordances, and Section \ref{localize} presents a mechanism to recognize and localize distant probabilistic affordances in space. Finally, Section \ref{conclusion} encompasses some conclusive remarks and future development of the intersubjectivity problem.
+It is subdivided as follow: Section \ref{RI} summarizes and formalizes the Radical Interactionism model, Section \ref{signatures} presents a model for defining and recognizing probabilistic affordances, and Section \ref{localize} presents a mechanism to recognize and localize distant probabilistic affordances in space. Finally, Section \ref{conclusion} encompasses some conclusive remarks and future development of the intersubjectivity problem.
 
 \section{The Radical Interactionism (RI) model}\label{RI}
 
 %Developmental learning [17] makes the assumption that the agent is agnostic of its environment [5]. This assumption prohibits considering that the agent can identify states, both for its environment and for itself. 
 
-In contrast with most machine learning approaches, an RI agent cannot directly detect the state of its environment through perceptual data. 
-The agent's input data is not a percept of the state of the environment but an outcome of a control loop. 
-An RI agent learns and exploits regularities in sequences of the control loops offered by its coupling with its environment.  
-The learning mechanism differs from reinforcement learning (e.g., as it is typically implemented in a Partially Observable Markov Decision Process, POMDP) by the fact that RI agents have no reward defined as a function of the system's state. 
-Our goal is not to design agents that reach predefined goal states or maximize a reward value, but to generate open-ended learning and collective behaviors.
+In contrast with most machine learning approaches, an RI agent cannot directly detect states of its environment: %through perceptual data.
+the agent's input data is not a percept of a state but an outcome of a control loop, called \textit{interaction}.
+An RI agent learns and exploits regularities in sequences of interactions offered by its coupling with its environment.
+%The learning mechanism differs from reinforcement learning (e.g., as it is typically implemented in a Partially Observable Markov Decision Process) by the fact that RI agents have no reward defined as a function of the system's state.
+Our goal is not to design agents that reach predefined goal or maximize a reward value, but to study the construction of emergent models of the environment, and generate open-ended learning and behaviors.
 %This theoretically simplifies the system complexity as it depend on the complexity of agent's sensorimotor system rather than environment complexity.
 
-Let $I$ be the set of predefined primitive interactions (pointers to predefined control loops), and $\nu_i \in \mathbb{R}$ the predefined valence of primitive interaction $i \in I$.
-At the beginning of step $t$, the agent selects an \textit{intended interaction} $i_t \in I$. 
-An example consists in moving forward for a predefined amount of time while detecting no obstacle.
+Let $I$ be the set of predefined primitive interactions (control loops), and $\nu_i \in \mathbb{R}$ the predefined valence of primitive interaction $i \in I$.
+At the beginning of step $t$, the agent selects an \textit{intended interaction} $i_t \in I$.
+An example consists in moving a step forward. %for a predefined amount of time while detecting no obstacle.
 At the end of step $t$, the agent is informed of the \textit{enacted interaction} $e_t \in I$ that was actually enacted. 
 If $i_t = e_t$ then the enaction is a success. 
-The agent \textit{did} move forward without detecting an obstacle. 
-Otherwise, the tentative enaction of $i_t$ was a failure. 
-For example, the agent actually enacted another interaction consisting in bumping into an obstacle, which may have a negative valence.
-An RI agent learns to anticipate the results of its interactions, and tries to enact interactions that have high valences.
+The agent \textit{did} move forward.
+Otherwise, the enaction of $i_t$ is a failure.
+For example, the agent actually enacted another interaction consisting in \textit{bumping} into an obstacle, which may have a negative valence.
+An RI agent learns to anticipate the results of its interactions, and tries to enact interactions with high valences.
 
 To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model which allows the simultaneous enaction of multiple interactions. 
-At the end of step $t$, coinciding with the beginning of step $t+1$, the agent receives, not one, but a set of $k$ enacted interactions $E_{t+1}=\{e_{1,t},..., e_{k,t}\} \subset I$. 
-For example, when the agent is moving, each enacted interaction can reflect the relative displacement of a salient point in the visual field. 
-This allows the computation of optical flow used to infer the agent's displacements.  
+The PRI considers additionnal stimuli that cannot be separated from the movement that produced them. The optical flow is an example of such stimuli, that must be associated to a movement to characterize a position in space. Thus, the PRI model considers primary interactions as control loops (action,result), and secondary interactions as a couple (interaction, stimulus).
+At the end of step $t$, %coinciding with the beginning of step $t+1$,
+the agent receives, not one, but a set of $k$ enacted interactions $E_t=\{e_{1,t},..., e_{k,t}\} \subset I$, containing a primary interaction and a set of secondary interactions associated to this primary interaction. %The enaction is a success when $i_t \in E_t$.
+%For example, when the agent is moving, each enacted interaction can reflect the relative displacement of a salient point in the visual field.
+%This allows the computation of optical flow used to infer the agent's displacements.
 
-Previous PRI experiments showed that the agent was able to discover and recognize static objects through the visual interactions that they afforded (relative displacement of salient points). 
-The agent learned to localize distant affordances (possibilities of enacting an interaction, \cite{gibson:affordances}), and to store and keep track of them in an emergent structure that played the role of spatial memory. 
-The agent generated an implicit context in spatial memory, and used it to generate behaviors in accordance with its interactional motivation. 
+Previous PRI experiments showed that the agent was able to define, recognize and localize affordances \cite{gibson:affordances}), %of static entities through the visual interactions that they afforded (relative displacement of salient points).
+%The agent learned to localize distant affordances (possibilities of enacting an interaction, \cite{gibson:affordances}), and to store and keep track of them in an emergent structure that played the role of spatial memory.
+%The agent generated an implicit context in spatial memory, and used it to generate behaviors in accordance with its interactional motivation.
+and to store and keep track of them in an emergent structure, called Space Memory, that generates an implicit context of affordances that the agent can exploit to generate behaviors in accordance with its interactional motivation.
 A subsequent model also showed the possibility to identify objects that moved in a straight line, by considering sequences of consecutive interactions \cite{gay:dynamic}. 
-These models, however, worked poorly with entities that made random movements (other agents), because it was not possible to associate the presence of an observed entity with a specific affordance. The present study addresses this limitation.
+These models, however, worked poorly with entities that made random movements (other agents), because it was not possible to associate the presence of an observed entity with the result of an interaction. The present study addresses this limitation.
 
 %Next Sections III and IV present adaptation of mechanisms to define and recognize affordances, ant to localize distant affordances, in a form that is compatible with specifications of the space memory model.
 
@@ -136,7 +146,7 @@ Formally, a \textit{signature of interaction} is a function $S_i : \mathcal{P}(I
 $S_i(E_{t-1}) \in [-1, 1]$ gives the estimated possibility of successfully enacting interaction $i$ at step $t$: 1 for certainty of success, -1 for certainty of failure. 
 To improve this estimation, the agent adjusts $S_i$ each time $i$ succeeds or fails. %Previous implementations of signatures used formal neurons [ ] or discrete ensembles of interactions [ ].
 
-Signatures must be \textit{reversible}: they allow defining a reverse function $\hat{S}_i : \{-1;1\} \rightarrow \mathcal{P}(\mathcal{P}(I))$ such that $\hat{S}_i(-1)$ gives the set of minimal contexts in which the enaction of $i$ is impossible, and $\hat{S}_i(1)$ gives the set of minimal contexts in which it is possible, i.e., the contexts that \textit{afford} $i$.
+Signatures must be \textit{reversible}: they allow defining a reverse function $\hat{S}_i : \{-1;1\} \rightarrow \mathcal{P}(\mathcal{P}(I))$ such that  $\hat{S}_i(1)$ gives the set of minimal contexts $C_l^i$ in which it is possible, i.e., the contexts that \textit{afford} $i$, and $\hat{S}_i(-1)$ gives the set of minimal contexts in which the enaction of $i$ is impossible.
 We use the terms \textit{afford} and \textit{affordance} in compliance with Gibson's terminology, and with their formalization by Chemero \cite{chemero:affordance} and Stoffregen \cite{stoffregen:affordance}. 
 %These sets of contexts should be \textit{minimal} (i.e. $\nexists E_1,\!E_2\!\in\!\hat{S}_i(x), x\!\in\!\{1;-1\} / E1\!\subset\!E2$). 
 %We note $C_k^{S_i} \in S_i$ a minimal context affording $i$.
@@ -163,19 +173,19 @@ We thus propose to separate the estimation of the presence of an affordance from
 
 \subsection{Separating affordances from probability of success}\label{separate}
 
-From the observer's perspective, three types of situations can happen when the agent tries an interaction withe a mobile entity:
+From an observer's perspective, three types of situations can happen when the agent tries interacting with a mobile entity:
 \begin{enumerate}
 \item The affordance is present at the right place, and the agent enacts the interaction successfully (e.g., a prey is in front of the agent, and the agent catches the prey).
 \item The affordance is present, but the interaction fails (e.g., a prey is in front of the agent, but the prey moves and the agent fails to catch it).
 \item The affordance is absent, leading to a failure of the interaction (e.g., there is not pray in front of the agent, but the agent tries to catch one and fails).
 \end{enumerate}
 From the agent's perspective, situations 2 and~3 cannot be distinguished, as they have the same result.
-From the agent's perspective, situations of types 1 and 2 can occur in the same context $E$.
+%From the agent's perspective, situations of types 1 and 2 can occur in the same context $E$.
 %situations of type 2 and~3 cannot be distinguished: the agent fails to evaluate the affordance and to catch the pray. Moreover, 
-The existence of situations of type 2 distorts the learning of signatures, causing the prediction $S_i(E)$ to remain negative even though the affordance is present.
+The existence of situations of type 2 distorts the learning of signatures, as situations 1 and 2 can occur in the same context $E$, causing the prediction $S_i(E)$ to remain negative even though the affordance is present.
 %, and thus the possibility to distinguish situations 1 and 2 from situations 3.
 However, our preliminary tests showed %an interesting results:
-that, despite remaining negative due to situations 2, the signature predictions are slightly higher in case of situations 1-2 than in situations 3. Indeed, the existence of situations 1 influence the signature, allowing the context of interactions corresponding to the affordance to emerge while remaining insufficient to predict with a positive value.
+that, despite remaining negative, the signature predictions are slightly higher in case of situations 1-2 than in situations 3. Indeed, the existence of situations 1 allows the context of interactions corresponding to the affordance to emerge while remaining insufficient to predict with a positive value.
 
 From this observation, we propose to use the average prediction in case of failure $\overline{S_i^f}$ as a threshold to distinguish between situations 2 and 3 after a failure. 
 When the interaction fails in an assumed situation 2 (i.e., $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limits the influence of situations 2 in signature construction. 
@@ -188,18 +198,18 @@ When the interaction fails in an assumed situation 2 (i.e., $S_i(E_t)>\overline{
 %Then, when the prediction $S(E_t)>\overline{S^-}$, the signature is not learned in case of failure. This principle thus decrease the influences of situations that are expected to be situation 2. %, allowing the construction of the signature. 
 %This principle is applied when the average prediction $\overline{S^-}$ is lower than a treshold (we used a value of -0.9), to let the context of interaction corresponding to the affordance starting to emerge in the signature.
 
-Symmetrically, some interactions may fail due to the unexpected apparition of an entity in a specific location (e.g., trying to move forward while an obstacle appears in front). 
+Symmetrically, some interactions may fail due to the presence an entity in a specific location (e.g., trying to move forward will succeeds unless an obstacle appears).
 %In such cases, situations 1' are related to the failure of the interaction, and situations 2' and 3' to its success. As situations 2' and 3' are expected to be more frequent than situations 1', 
 As success of such interactions are expected to be more frequent then failures, the average of predictions will converge to a positive value. 
-In this case, the average of positive predictions $\overline{S_i^s}$ is used as a threshold to prevent the signature reinforcement in case of success in an assumed situation 2' (i.e. $S_i(E_t)<\overline{S_i^s}$). 
+In this case, the average of positive predictions $\overline{S_i^s}$ is used as a threshold to prevent the signature reinforcement in case of success in an assumed situation 2 (i.e. $S_i(E_t)<\overline{S_i^s}$).
 %This principle is applied when $\overline{S_i^s}$ is greater than a threshold (we used a threshold of 0.9).
 
 
 %and thus are expected to success when the affordance is absent, we also define the average value of positive predictions $\overline{S^s}$. When this average value is greater than a treshold (we used a value of 0.9), a prediction lower than $\overline{S^+}$ is not learned in case of success.
 
-It is also possible to define the ratio of success when the prediction $S(E_t)$ is greater than the average $\overline{S^f}$ (or failure when $S(E_t)$ is lower than the average $\overline{S^s}$), implying that the agent is in a situation of type 1 or 2.
+It is also possible to define the ratio of success when the prediction $S(E_t)$ is greater than the average $\overline{S^f}$ (or failure when $S(E_t)$ is lower than the average $\overline{S^s}$), implying that the agent is in a situation of type 1 or 2. A ratio $p_{C_l^i}^i$ is thus defined for each context $C_l^i \in \hat{S}_i(1)$
 % (or 1' or 2'). 
-This ratio thus measures the probability that the interaction will succeed in the presence of the affordance by a mobile entity.
+This ratio thus measures the probability that the interaction will succeed in the presence of an affordance containing a mobile entity.
 
 
 
@@ -278,23 +288,23 @@ This ratio thus measures the probability that the interaction will succeed in th
 %The principle presented in this section makes possible the emergence of signatures of interactions related to probabilistic affordances, and to estimate the probability of enaction. However the signatures merge all contexts affording an interaction, and does not differenciate the probability of each of these contexts, as observed for the move forward interaction. This limitation prevents the propagation of the signature and the estimated probability of a distant affordance, which is required for affordance detection. Next Section III-B address this limitation.
 
 
-\subsection{Separating Possible Contexts}\label{contexts}
+\subsection{Implementation of signatures}\label{contexts}
 %-nécessité de séparer les contextes qui peuvent avoir des probabilités différentes
 %-principe et implémentation des signatures multi-neurones MAX
 
-The detection of distant affordances (described in Section~\ref{detection}) requires to differentiate the possible contexts affording an interaction, and attribute a probability to each context.
+%The detection of distant affordances (described in Section~\ref{detection}) requires to differentiate the possible contexts affording an interaction, and attribute a probability to each context.
 
-We propose an adaptation of the signature mechanism, based on multiple neurons, illusrated in Fig. \ref{fig:neuron}. Each signature $S_i$ consists of a set of $n$ neurons $N_k^i$ ; the neuron with the strongest output defines the prediction of the signature. In case of success, the neuron with the strongest output is reinforced, while a failure reinforce all neurons. This competition leads to a specialization of each neuron for a specific context, while they are desensitized from other contexts. Thus, with a sufficient number of neurons, a signature can identify contexts affording its interaction independently.
+We propose a signature architecture extending Gay \textit{et al}'s implementation[ ], based on multiple neurons, and illusrated in Fig. \ref{fig:neuron}. Each signature $S_i$ consists of a set of $n$ neurons $N_k^i$~; the neuron with the strongest output defines the prediction of $S_i$. In case of success, the neuron with the strongest output is reinforced, while a failure reinforce all neurons. This competition leads to a specialization of each neuron for a specific context, while they are desensitized from other contexts. Thus, with a sufficient number of neurons, a signature can identify contexts affording its interaction independently.
 
-Formally, a neuron $k$ is defined as a set of weights $w_l^k$ (with $Card(\{w_l^k\})=Card(I)$, with an output defined as:
+Formally, a neuron $n$ is defined as a set of weights $w_k^n$ (with $Card(\{w_k^n\})=Card(I)$, with an output defined as:
 \begin{equation}
-N_i^k(E_t)~=~f(\sum_{i} E_t[i] \times w[i])~,~ f(x) = { {1}\over{1+e^{-x} }}
+N_i^n(E_t)~=~f(\sum_{k} E_t[k] \times w_k^n)~,~ f(x) = { {1}\over{1+e^{-x} }}
 \end{equation}
 where the interactional context $E_t$ takes the form of a vector of size $Card(I)$, with $E_t[k]=1$ when interaction $i_k$ is enacted as a success and $E_t[k]=0$ otherwise.
 
 Then, the response of the group is defined as the maximum output, and remapped to a range in $[-1;1]$:
 \begin{equation}
-N_i(E_t)~=~max_k (N_i^k(E_t) ) \: \times \: 2 ~+~ 1
+N_i(E_t)~=~max_n (N_i^n(E_t) ) \: \times \: 2 ~+~ 1
 \end{equation}
 In order to consider interactions that are afforded by the absence of their affordance instead of their presence, we added an output weight $W_i$ defining the output of the signature:
 \begin{equation}
@@ -303,28 +313,27 @@ S_i(E_t)~=~N_i(E_t) \times W_i
 The weight $W_i$ is restrained in the interval $[-1,1]$, allowing to inverse the result of the prediction, which makes neurons able to integrate contexts preventing the enaction of $i$.
 
 The learning process uses a classical gradient descent:
-
 %- The candidate signature $i$ stores the signature certitude $S^i$ output value $N^i$ and output value of each neuron $N_k^i$ of the signature. Once intended, the enaction of $i$ can be a success ($R_t=1$) or a failure ($R_t=-1$).
-
-- The enaction result is defined as $R_t=1$ in case of success and $R_t=-1$ in case of failure.
+The enaction result of $i$ is defined as $R_t=1$ in case of success ($i_t \in E_t$) and $R_t=-1$ in case of failure ($i_t \not\in E_t$).
 
 - The weight $W_i$ is updated as follow:
 
-$W_i ~\Leftarrow~ W_i+ \Delta^i . (\alpha * N_i - \alpha /2)$, ~with $\Delta^i=R_t-S_i(E_t)$
+$W_i ~\Leftarrow~ W_i+ \Delta_i . (\alpha * N_i - \alpha /2)$, ~with $\Delta_i=R_t-S_i(E_t)$
 and $\alpha$ the learning rate.
 
 - In case of a success, only the neuron with higher output is reinforced, all neurons are reinforced in case of failure:
 
-$W_k^i ~\Leftarrow~ W_k^i+ \alpha . \Delta_k^i . N_k^i$,
-with $\Delta_k^i=(R_t.W_i + 1)/2 - N_k^i$
+$w_k^n ~\Leftarrow~ w_k^n+ \alpha . \Delta_i^n . N_i^n$,
+with $\Delta_i^n=(R_t.W_i + 1)/2 - N_i^n$
 
 
 %Note that the principle described in Section III-A is applied. 
-To increase the specialization of neurons, in case of a success, weights of the most active neuron connected to failed interaction can be reduced (desensitizing this neuron from other contexts than the current one) and reducing weights of other neurons that are related to successful interactions (desensitizing other neurons from the current context).
+To increase the specialization of neurons, in case of a success, weights of the most active neuron connected to failed interaction can be reduced (desensitizing this neuron from other contexts than the current one). % and reducing weights of other neurons that are related to successful interactions (desensitizing other neurons from the current context).
 
 %The signature $S_i$ can be subdivided into contexts $S_i^{j,n}$ identified by a neuron index $n$ and a primary interaction $j$ (i.e. the sub-set of weights of neuron $n$ of $S_i$ that are related to interaction $j$ and its associated secondary interactions). It is then possible to define the ratio of success and of failure of each context individually by updating ratios of the context $S_i^{j,n}$, designated by the enacted primary interaction $j$ and the most active neuron $n$.
 
-A consequence of this implementation is that high weights of neurons characterize contexts affording an interaction. It is also possible to consider weighs of a neuron by primary interaction, each group containing a weight related to a primary interaction and weights related to its associated secondary interaction. Thus, a signature $S_i$ can be subdivided into minimal contexts $C_{j,n}^{S_i}$, associated to a primary interaction $j$ and a neuron $n$. It is then possible to define the ratio of success $p_{j,n}^{s,i}$ and of failure $p_{j,n}^{f,i}$ of each context individually by updating them when primary interaction $j$ is enacted and neuron $n$ has the highest activity, and $S_i(E_t)<\overline{S_i^s}$ or $S_i(E_t)>\overline{S_i^f}$.
+A consequence of this implementation is that high weights of neurons characterize contexts affording $i$. It is also possible to consider weighs of a neuron by primary interaction, each group containing a weight related to a primary interaction and weights related to its associated secondary interaction. Thus, a signature $S_i$ can be subdivided into minimal contexts $C_{j,n}^i$, associated to a primary interaction $j$ and a neuron $n$. It is then possible to define the ratio of success $p_{j,n}^i$ % and of failure $p_{j,n}^{f,i}$
+of each context $C_{j,n}^i$ by updating it when $j \in E_{t-1}$ and neuron $n$ has the highest activity, and $S_i(E_{t-1})<\overline{S_i^s}$.% or $S_i(E_t)>\overline{S_i^f}$.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.6]{img/signature_model2.pdf}}
@@ -332,10 +341,9 @@ A consequence of this implementation is that high weights of neurons characteriz
 \label{fig:neuron}
 \end{figure}
 
-\subsection{Implementation}\label{implementation}
+\subsection{Test Environment}\label{implementation}
 
-This signature mechanism was tested on an artificial agent moving in the 2-dimensional discrete environment shown in Figure~\ref{fig:environment}. 
-
+This signature mechanism was tested on an artificial agent moving in the 2-dimensional discrete environment shown in Fig.~\ref{fig:environment}.
 The sensorimotor possibilities of the agent define the following five primary interactions:
 
  \begin{tabular}{ l l }
@@ -367,6 +375,7 @@ The fish move randomly in the environment: at each simulation step, a fish can m
 }
 \label{fig:environment}
 \end{figure}
+
 
 
 
