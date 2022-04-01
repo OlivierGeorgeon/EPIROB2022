@@ -100,7 +100,7 @@ It is subdivided as follow: Section \ref{RI} summarizes and formalizes the Radic
 In contrast with most machine learning approaches, an RI agent cannot directly detect states of its environment: %through perceptual data.
 the agent's input data is not a percept of a state but an outcome of a control loop, called \textit{interaction}.
 An RI agent learns and exploits regularities in sequences of interactions offered by its coupling with its environment.
-%The learning mechanism differs from reinforcement learning (e.g., as it is typically implemented in a Partially Observable Markov Decision Process) by the fact that RI agents have no reward defined as a function of the system's state.
+The learning mechanism differs from reinforcement learning (e.g., as it is typically implemented in a Partially Observable Markov Decision Process) by the fact that RI agents have no reward defined as a function of the system's state.
 Our goal is not to design agents that reach predefined goal or maximize a reward value, but to study the construction of emergent models of the environment, and generate open-ended learning and behaviors.
 %This theoretically simplifies the system complexity as it depend on the complexity of agent's sensorimotor system rather than environment complexity.
 
@@ -114,7 +114,7 @@ Otherwise, the enaction of $i_t$ is a failure.
 For example, the agent actually enacted another interaction consisting in \textit{bumping} into an obstacle, which may have a negative valence.
 An RI agent learns to anticipate the results of its interactions, and tries to enact interactions with high valences.
 
-To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model which allows the simultaneous enaction of multiple interactions. 
+To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model \cite{gay:space} which allows the simultaneous enaction of multiple interactions.
 The PRI considers additionnal stimuli that cannot be separated from the movement that produced them. The optical flow is an example of such stimuli, that must be associated to a movement to characterize a position in space. Thus, the PRI model considers primary interactions as control loops (action,result), and secondary interactions as a couple (interaction, stimulus).
 At the end of step $t$, %coinciding with the beginning of step $t+1$,
 the agent receives, not one, but a set of $k$ enacted interactions $E_t=\{e_{1,t},..., e_{k,t}\} \subset I$, containing a primary interaction and a set of secondary interactions associated to this primary interaction. %The enaction is a success when $i_t \in E_t$.
@@ -135,9 +135,15 @@ These models, however, worked poorly with entities that made random movements (o
 
 %The signature mechanism proposed in this section propose to cope with the probabilistic affordance problem by separating the certitude of presence of the signature and the probability of success of the associated interaction.
 
-This section explains the \textit{signature mechanism} by which the agent estimates the possibility of enacting interactions in a given context. 
-If the experimental settings satisfy the Markov property, we can use the set $E_t \subset I$ of the interactions enacted during step $t-1$ as the context upon which the agent estimates the probability of success of interactions during step $t$. 
-Otherwise, we must chain sequences of interactions to extend the temporal dependency. 
+This section explains the \textit{signature mechanism} \cite{gay:space} by which the agent estimates the possibility of enacting interactions in a given context.
+%If the experimental settings satisfy the Markov property, we can use the set $E_t \subset I$ of the interactions enacted during step $t-1$ as the context upon which the agent estimates the probability of success of interactions during step $t$.
+%Otherwise, we must chain sequences of interactions to extend the temporal dependency.
+This mechanism is based on the assumption that the enaction result of an interaction depends on a limited context of elements in the environment, or \textit{affordance}, refering to the concept of affordances proposed by Gibson [9]. %, and especially the formalization given by Chemero \cite{chemero:affordance} and Stoffregen \cite{stoffregen2018affordances}, who consider an affordance as a property emerging from the agent-environment coupling.
+As a PRI agent can only perceive its environment through enacted interactions, we define the signature $S_i$ of an interaction i as an emerging structure characterizing one
+(or more) ensemble(s) of interactions $\{j_k\}$ whose enaction (i.e. $\{j_k\} \in E_{t-1}$ ) can characterize the presence of an element affording $i$.
+
+Defining objects by learning affordances they provide is abundant in literature \cite{paola:affordance}.
+For example, Ugur et al. \cite{ugur:traversability} and Baleia \cite{baleia:affordance} proposed models of agents learning to define elements of their environments through offered possibilities of actions (e.g. ``walkthroughable'' or not). These approaches define affordances from perception, which limit the detection for the current action, or requires prior knwoledge on environemnt and space (e.g. \cite{manoury:affordance}) to detect distant affordances. Signatures cope with this limitation by using interactions instead of perception, allowing to exploit spatial properties implicitely encoded in interactions to detect distant affordances.
 
 
 %, and thus, the enactability of $i$.  This approach addresses the knowledge grounding problem \cite{harnad:grounding} by letting knowledge of objects arise from experience.
@@ -147,7 +153,7 @@ $S_i(E_{t-1}) \in [-1, 1]$ gives the estimated possibility of successfully enact
 To improve this estimation, the agent adjusts $S_i$ each time $i$ succeeds or fails. %Previous implementations of signatures used formal neurons [ ] or discrete ensembles of interactions [ ].
 
 Signatures must be \textit{reversible}: they allow defining a reverse function $\hat{S}_i : \{-1;1\} \rightarrow \mathcal{P}(\mathcal{P}(I))$ such that  $\hat{S}_i(1)$ gives the set of minimal contexts $C_l^i$ in which it is possible, i.e., the contexts that \textit{afford} $i$, and $\hat{S}_i(-1)$ gives the set of minimal contexts in which the enaction of $i$ is impossible.
-We use the terms \textit{afford} and \textit{affordance} in compliance with Gibson's terminology, and with their formalization by Chemero \cite{chemero:affordance} and Stoffregen \cite{stoffregen:affordance}. 
+%We use the terms \textit{afford} and \textit{affordance} in compliance with Gibson's terminology, and with their formalization by Chemero \cite{chemero:affordance} and Stoffregen \cite{stoffregen2018affordances}.
 %These sets of contexts should be \textit{minimal} (i.e. $\nexists E_1,\!E_2\!\in\!\hat{S}_i(x), x\!\in\!\{1;-1\} / E1\!\subset\!E2$). 
 %We note $C_k^{S_i} \in S_i$ a minimal context affording $i$.
 
@@ -297,7 +303,7 @@ This ratio thus measures the probability that the interaction will succeed in th
 
 %The detection of distant affordances (described in Section~\ref{detection}) requires to differentiate the possible contexts affording an interaction, and attribute a probability to each context.
 
-We propose a signature architecture extending Gay \textit{et al}'s implementation[ ], based on multiple neurons, and illusrated in Fig. \ref{fig:neuron}. Each signature $S_i$ consists of a set of $n$ neurons $N_k^i$~; the neuron with the strongest output defines the prediction of $S_i$. In case of success, the neuron with the strongest output is reinforced, while a failure reinforce all neurons. This competition leads to a specialization of each neuron for a specific context, while they are desensitized from other contexts. Thus, with a sufficient number of neurons, a signature can identify contexts affording its interaction independently.
+We propose a signature architecture extending Gay \textit{et al}'s implementation \cite{gay:space}, based on multiple neurons, and illusrated in Fig. \ref{fig:neuron}. Each signature $S_i$ consists of a set of $n$ neurons $N_k^i$~; the neuron with the strongest output defines the prediction of $S_i$. In case of success, the neuron with the strongest output is reinforced, while a failure reinforce all neurons. This competition leads to a specialization of each neuron for a specific context, while they are desensitized from other contexts. Thus, with a sufficient number of neurons, a signature can identify contexts affording its interaction independently.
 
 Formally, a neuron $n$ is defined as a set of weights $w_k^n$ (with $Card(\{w_k^n\})=Card(I)$, with an output defined as:
 \begin{equation}
