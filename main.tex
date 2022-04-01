@@ -9,6 +9,16 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 
+\makeatletter
+\let\cite\relax
+\DeclareRobustCommand{\cite}{%
+	\let\new@cite@pre\@gobble
+	\@ifnextchar[\new@cite{\@citex[]}}
+\def\new@cite[#1]{\@ifnextchar[{\new@citea{#1}}{\@citex[#1]}}
+\def\new@citea#1{\def\new@cite@pre{#1}\@citex}
+\def\@cite#1#2{[{\new@cite@pre\space#1\if\relax\detokenize{#2}\relax\else, #2\fi}]}
+\makeatother
+
 \begin{document}
 
 \title{%Toward Intersubjectivity in Developmental Agents: Integrating Probabilistic Affordances in the Emergent Model of the Environment.
@@ -64,14 +74,14 @@ The addition into the environment of entities that move according to their own r
 
 %- introduction brève du DL, introduction du vocabulaire\newline
 
-This study is situated within the framework of artificial constructivist learning, e.g., \cite{wang_new_2012} and enactive learning, e.g., \cite{froese2009enactiveAI}. 
+This study is situated within the framework of artificial constructivist learning \cite[e.g.,][]{wang_new_2012} and enactive learning \cite[e.g.,][]{froese2009enactiveAI}. 
 In this framework, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget2013construction}, and called \textit{interactions}.
 %We initialize the agent with a predefined set of control loops called \textit{primitive interactions}.
 %We associate each primitive interaction with a predefined numerical \textit{valence}.
 %We design the agent's software so that the agent seeks to enact interactions that have positive valences, and to avoid enacting interactions that have negative valences.
 The agent starts with a predefined set of uninterpreted \textit{interactions} associated with predefined numerical \textit{valences}, and seeks to enact interactions with positive valences and avoids interactions with negative valences.
 Such software endows the agent with a kind of self motivation that we have called \textit{interactional motivation} \cite{georgeon_interactional_2012}.
-This view on self motivation relates to the notion of \textit{intrinsic motivation} of artificial agents for \textit{developmental learning}, e.g., \cite{oudeyer_intrinsic_2007}.
+This view on self motivation relates to the notion of \textit{intrinsic motivation} of artificial agents for \textit{developmental learning} \cite[e.g.,][]{oudeyer_intrinsic_2007}.
 For a complete description, we refer the reader to our previous papers in which we have called this approach \textit{Radical Interactionism} (RI) \cite{georgeon:radical} and \textit{artificial interactionism} \cite{GuillerminGeorgeon2022}. 
 Overall, the learning is \textit{unsupervised}. 
 %There are no human-defined labels attached with perceptions or with categories of entities, no pre-coded ontology of the world, no semantics associated with action data or sensory data.
@@ -83,7 +93,7 @@ The agent has no \textit{a priori} knowledge on its perception nor on its enviro
 
 %In designing agents that autonomously learn to interact with other agents,
 Through this integration of mobile entities,
-we pursue the long-term goal of allowing the emergence of social interactions within groups of artificial agents, e.g., \cite{nsfkatz10}. Generating such collective behaviors %involving other agents
+we pursue the long-term goal of allowing the emergence of social interactions within groups of artificial agents \cite[e.g.,][]{nsfkatz10}. Generating such collective behaviors %involving other agents
 requires overcoming two main problems:
 
 1) learning to define, recognize and localize other agents that make individual movements in the environment,
