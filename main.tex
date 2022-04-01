@@ -70,7 +70,7 @@ We address the problem of how an artificial agent that learns an emergent model 
 %- introduction brève du DL, introduction du vocabulaire\newline
 
 
-This study is situated within the framework of artificial constructivist learning \cite[e.g.,][]{wang_new_2012} and enactive learning \cite[e.g.,][]{froese2009enactiveAI}. 
+This study is situated within the framework of artificial constructivist learning \cite[e.g.,][]{wang_new_2012} and enactive learning \cite[e.g.,][]{froese2009enactiveAI}.
 In this framework, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget2013construction}, and called \textit{interactions}.
 %We initialize the agent with a predefined set of control loops called \textit{primitive interactions}.
 %We associate each primitive interaction with a predefined numerical \textit{valence}.
@@ -538,7 +538,7 @@ $\hat{S}_i^{\sigma_{a+1}}\!=\!\bigcup_{\forall C_l^i \in \hat{S}_i^{\sigma_a} / 
 with $\sigma_{a+1}=[j,\sigma_a]$ and $C_l^i=\{j_k\}$ contexts of interactions associated to the same primary interaction $j$. % of predecessor $\hat{S}_i^{\sigma_a}$
 %(that must contains interaction associated to primary interaction $j$).
 A predecessor $\hat{S}_i^\sigma$ characterizes a set of contexts that are expected to afford $i$ after enacting sequence $\sigma$. %, if \textit{moved} through the enaction of the sequence of interactions $\sigma$, affords~$i$.
-Then, when a context $C_l^j \in \hat{S}_i^\sigma$ is observed in $E_t$, a distant affordance of $i$ is assumed to be present at a position characterized by $\sigma$, in egocentric reference.
+Then, when a context $C_l^j \in \hat{S}_i^\sigma$ is observed in $E_t$, a distant affordance of $i$ is assumed to be present at \textit{position} $\sigma$, in egocentric reference.
 
 %- principe du proto-objet\newline
 
@@ -546,7 +546,7 @@ Then, when a context $C_l^j \in \hat{S}_i^\sigma$ is observed in $E_t$, a distan
 
 \subsection{Backmoving a Probabilistic Affordance}\label{backmove}
 
-Applying the backmove principle to a signature of a probabilistic affordances would generate a set of predecessor covering all possible future positions of this affordance after enacting a sequence $\sigma$, leading to a detection of an affordance through multiple positions in space, which
+Applying the backmove principle to a signature of a probabilistic affordances would generate a set of predecessor covering all possible future positions of this affordance after enacting a sequence $\sigma$. This would lead to a detection of an affordance through multiple positions, which
 % the set of predecessor defining the position of the affordance as a 'probability wave' that extends while the sequence $\sigma$ is growing.
 %A unique mobile element of the environment would thus be detected a set of different positions. %, whose 'probability waves' cover this element.
 %However, this localization through multiple position cannot be exploited by the space memory architecture, as requires to consider affordances with unique positions in space.
@@ -693,7 +693,7 @@ the resulting sequence is a compromise between probability and length of the seq
 
 \section{Conclusion and Future Work}\label{conclusion}
 
-This work propose a new mechanism to enable an environmentally agnostic agent to consider mobile and non-predictable elements in its emergent model of the environment. Results obtained in a simulated environment showed that the agent can still detect position of distant affordances without the notion of space, and define these position in a similar way than in static environment, allowing the use of a space memory.
+This work propose a new mechanism to enable an environmentally agnostic agent to consider mobile and non-predictable entities in its emergent model of the environment. Results obtained in a simulated environment showed that the agent can still localize distant affordances without the notion of space, and define these position in a similar way than in static environment, allowing the use of a Space Memory \cite{gay:space}.
 
 Future work will study how the space memory can be used in such a stochastic environment, and how intrinsically motivated decisionnal mechanism can integrate probabilities of presence of affordance into consideration.
 
