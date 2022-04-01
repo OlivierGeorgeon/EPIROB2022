@@ -303,31 +303,31 @@ This ratio thus measures the probability that the interaction will succeed in th
 
 %The detection of distant affordances (described in Section~\ref{detection}) requires to differentiate the possible contexts affording an interaction, and attribute a probability to each context.
 
-We propose a signature architecture extending Gay \textit{et al}'s implementation \cite{gay:space}, based on multiple neurons, and illusrated in Fig. \ref{fig:neuron}. Each signature $S_i$ consists of a set of $n$ neurons $N_k^i$~; the neuron with the strongest output defines the prediction of $S_i$. In case of success, the neuron with the strongest output is reinforced, while a failure reinforce all neurons. This competition leads to a specialization of each neuron for a specific context, while they are desensitized from other contexts. Thus, with a sufficient number of neurons, a signature can identify contexts affording its interaction independently.
+We propose a signature architecture extending Gay \textit{et al}'s implementation \cite{gay:space}, based on multiple neurons, and illusrated in Fig. \ref{fig:neuron}. Each signature $S_i$ consists of $m$ neurons $N_i^1$ to $N_i^m$~; the neuron with the strongest output defines the prediction of $S_i$. In case of success, the neuron with the strongest output is reinforced, while a failure reinforce all neurons. This competition leads to a specialization of each neuron for a specific context, while they are desensitized from other contexts. Thus, with a sufficient number of neurons, a signature can identify contexts affording its interaction independently.
 
-Formally, a neuron $n$ is defined as a set of weights $w_k^n$ (with $Card(\{w_k^n\})=Card(I)$, with an output defined as:
+Formally, a neuron $N_i^n$ is defined as a set of weights $\{w_k^n\}$, with $Card(\{w_k^n\})=Card(I)$, and an output defined as:
 \begin{equation}
 N_i^n(E_t)~=~f(\sum_{k} E_t[k] \times w_k^n)~,~ f(x) = { {1}\over{1+e^{-x} }}
 \end{equation}
-where the interactional context $E_t$ takes the form of a vector of size $Card(I)$, with $E_t[k]=1$ when interaction $i_k$ is enacted as a success and $E_t[k]=0$ otherwise.
+where $E_t[k]=1$ when $i_k \in E_t$ and $E_t[k]=0$ otherwise.
 
 Then, the response of the group is defined as the maximum output, and remapped to a range in $[-1;1]$:
 \begin{equation}
 N_i(E_t)~=~max_n (N_i^n(E_t) ) \: \times \: 2 ~+~ 1
 \end{equation}
-In order to consider interactions that are afforded by the absence of their affordance instead of their presence, we added an output weight $W_i$ defining the output of the signature:
+In order to consider interactions that are afforded by the absence of an entity instead of its presence, we added an output weight $W_i$ defining the output of the signature:
 \begin{equation}
 S_i(E_t)~=~N_i(E_t) \times W_i
 \end{equation}
 The weight $W_i$ is restrained in the interval $[-1,1]$, allowing to inverse the result of the prediction, which makes neurons able to integrate contexts preventing the enaction of $i$.
 
-The learning process uses a classical gradient descent:
+The learning process uses a classical gradient descent and prediction values obtained with $E_{t-1}$:
 %- The candidate signature $i$ stores the signature certitude $S^i$ output value $N^i$ and output value of each neuron $N_k^i$ of the signature. Once intended, the enaction of $i$ can be a success ($R_t=1$) or a failure ($R_t=-1$).
-The enaction result of $i$ is defined as $R_t=1$ in case of success ($i_t \in E_t$) and $R_t=-1$ in case of failure ($i_t \not\in E_t$).
+the enaction result of $i$ is defined as $R_t=1$ in case of success ($i_t \in E_t$) and $R_t=-1$ in case of failure ($i_t \not\in E_t$).
 
 - The weight $W_i$ is updated as follow:
 
-$W_i ~\Leftarrow~ W_i+ \Delta_i . (\alpha * N_i - \alpha /2)$, ~with $\Delta_i=R_t-S_i(E_t)$
+$W_i ~\Leftarrow~ W_i+ \Delta_i . (\alpha * N_i - \alpha /2)$, ~with $\Delta_i=R_t-S_i(E_{t-1})$
 and $\alpha$ the learning rate.
 
 - In case of a success, only the neuron with higher output is reinforced, all neurons are reinforced in case of failure:
@@ -341,7 +341,7 @@ To increase the specialization of neurons, in case of a success, weights of the 
 
 %The signature $S_i$ can be subdivided into contexts $S_i^{j,n}$ identified by a neuron index $n$ and a primary interaction $j$ (i.e. the sub-set of weights of neuron $n$ of $S_i$ that are related to interaction $j$ and its associated secondary interactions). It is then possible to define the ratio of success and of failure of each context individually by updating ratios of the context $S_i^{j,n}$, designated by the enacted primary interaction $j$ and the most active neuron $n$.
 
-A consequence of this implementation is that high weights of neurons characterize contexts affording $i$. It is also possible to consider weighs of a neuron by primary interaction, each group containing a weight related to a primary interaction and weights related to its associated secondary interaction. Thus, a signature $S_i$ can be subdivided into minimal contexts $C_{j,n}^i$, associated to a primary interaction $j$ and a neuron $n$. It is then possible to define the ratio of success $p_{j,n}^i$ % and of failure $p_{j,n}^{f,i}$
+A consequence of this implementation is that high weights of neurons characterize contexts affording $i$. It is also possible to consider weighs of a neuron by primary interaction, each group containing a weight related to a primary interaction and weights related to its associated secondary interaction. Thus, a signature $S_i$ can be subdivided into minimal contexts $C_{j,n}^i$, associated with a primary interaction $j$ and a neuron $n$. It is then possible to define the ratio of success $p_{j,n}^i$ % and of failure $p_{j,n}^{f,i}$
 of each context $C_{j,n}^i$ by updating it when $j \in E_{t-1}$ and neuron $n$ has the highest activity, and $S_i(E_{t-1})<\overline{S_i^s}$.% or $S_i(E_t)>\overline{S_i^f}$.
 
 \begin{figure}[htbp]
@@ -370,7 +370,7 @@ Secondary interactions consist in seeing a red, green or blue element while enac
 The interaction bump, that does not produce movement, does not generate visual interactions. 
 We discretize the visual field as a regular grid of 15 × 8 positions centered on the agents that matches the grid of the environment. 
 We thus define 4 × 3 × 15 × 8 = 1440 possible secondary interactions.
-Signatures are implemented as sets of 6 neurons. % (Section V discusses on the possibilities of dynamic arrays of neurons).
+Signatures are implemented as sets of $m=6$ neurons. % (Section V discusses on the possibilities of dynamic arrays of neurons).
 As we only study the emergence of signatures, we define a unique learning mechanism that foster interactions with low certitude of success or failure (low $|S_i(E_t)|$). 
 %Note that a secondary interaction can be candidate if its associated primary interaction is predicted as a success with a high certitude.
 
