@@ -107,7 +107,8 @@ Otherwise, the tentative enaction of $i_t$ was a failure.
 For example, the agent actually enacted another interaction consisting in bumping into an obstacle, which may have a negative valence.
 An RI agent learns to anticipate the results of its interactions, and tries to enact interactions that have high valences.
 
-To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model which allows the simultaneous enaction of multiple interactions. At the end of step $t$, the agent receives a set $E_t=\{e_{1,t},..., e_{k,t}\} \subset I$ of $k$ enacted interactions instead of a single enacted interaction. 
+To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model which allows the simultaneous enaction of multiple interactions. 
+At the end of step $t$, coinciding with the beginning of step $t+1$, the agent receives, not one, but a set of $k$ enacted interactions $E_{t+1}=\{e_{1,t},..., e_{k,t}\} \subset I$. 
 For example, when the agent is moving, each enacted interaction can reflect the relative displacement of a salient point in the visual field. 
 This allows the computation of optical flow used to infer the agent's displacements.  
 
@@ -124,8 +125,9 @@ These models, however, worked poorly with entities that made random movements (o
 
 %The signature mechanism proposed in this section propose to cope with the probabilistic affordance problem by separating the certitude of presence of the signature and the probability of success of the associated interaction.
 
-This section explains the \textit{signature mechanism} by which the agent estimates the possibilities of enacting interactions in a given context. 
-If the experimental settings satisfy the Markov property, we can use the set $E_{t-1} \subset I$ of the interactions enacted at step $t-1$ to define the current context upon which the agent estimates the probability of success of future interactions. Otherwise, we must chain sequences of interactions to extend the temporal dependency. 
+This section explains the \textit{signature mechanism} by which the agent estimates the possibility of enacting interactions in a given context. 
+If the experimental settings satisfy the Markov property, we can use the set $E_t \subset I$ of the interactions enacted during step $t-1$ as the context upon which the agent estimates the probability of success of interactions during step $t$. 
+Otherwise, we must chain sequences of interactions to extend the temporal dependency. 
 
 
 %, and thus, the enactability of $i$.  This approach addresses the knowledge grounding problem \cite{harnad:grounding} by letting knowledge of objects arise from experience.
@@ -159,20 +161,25 @@ We thus propose to separate the estimation of the presence of an affordance from
 %formatted and styled. Do not number text heads---{\LaTeX} will do that
 %for you.
 
-\subsection{Separating certainty and probability}\label{separate}
+\subsection{Separating affordances from probability of success}\label{separate}
 
-When the agent tests an interaction, three cases can be defined from an external observer's perspective:
+From the observer's perspective, three types of situations can happen when the agent tries an interaction withe a mobile entity:
 \begin{enumerate}
-\item The affordance is present at the right place, and the agent can enact the interaction successfully. (e.g. a prey is in front of the agent, and the agent could catch the prey).
-\item The affordance is present, but the interaction fails. (e.g. a prey is i front of the agent, but the prey moved and the agent missed catching the prey).
-\item The affordance is absent, leading to a failure of the interaction. (e.g. there is no prey in front of the agent, leading to a certain failure of catching a prey).
+\item The affordance is present at the right place, and the agent enacts the interaction successfully (e.g., a prey is in front of the agent, and the agent catches the prey).
+\item The affordance is present, but the interaction fails (e.g., a prey is in front of the agent, but the prey moves and the agent fails to catch it).
+\item The affordance is absent, leading to a failure of the interaction (e.g., there is not pray in front of the agent, but the agent tries to catch one and fails).
 \end{enumerate}
-From the agent's perspective, situations 2 and~3 cannot be distinguished, as they have the same result, and situations~2 prevents the construction of the signature.
+From the agent's perspective, situations 2 and~3 cannot be distinguished, as they have the same result.
+From the agent's perspective, situations of types 1 and 2 can occur in the same context $E$.
+%situations of type 2 and~3 cannot be distinguished: the agent fails to evaluate the affordance and to catch the pray. Moreover, 
+The existence of situations of type 2 distorts the learning of signatures, causing the prediction $S_i(E)$ to remain negative even though the affordance is present.
 %, and thus the possibility to distinguish situations 1 and 2 from situations 3.
 However, our preliminary tests showed %an interesting results:
 that, despite remaining negative due to situations 2, the signature predictions are slightly higher in case of situations 1-2 than in situations 3. Indeed, the existence of situations 1 influence the signature, allowing the context of interactions corresponding to the affordance to emerge while remaining insufficient to predict with a positive value.
 
-From this observation, we propose to use the average prediction in case of failure $\overline{S_i^f}$ as a threshold to distinguish situations 2 and 3 after a failure. Then, when the interaction failed in an assumed situation 2 (i.e. $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limit the influence of situations 2 in signature construction. %This principle is applied when $\overline{S_i^f}$ is lower than a threshold, assuming that the signature started to emerge (we used a threshold of -0.9).
+From this observation, we propose to use the average prediction in case of failure $\overline{S_i^f}$ as a threshold to distinguish between situations 2 and 3 after a failure. 
+When the interaction fails in an assumed situation 2 (i.e., $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limits the influence of situations 2 in signature construction. 
+%This principle is applied when $\overline{S_i^f}$ is lower than a threshold, assuming that the signature started to emerge (we used a threshold of -0.9).
 
 %The average value of negative predictions is evaluated using:
 %\begin{equation}
@@ -181,12 +188,18 @@ From this observation, we propose to use the average prediction in case of failu
 %Then, when the prediction $S(E_t)>\overline{S^-}$, the signature is not learned in case of failure. This principle thus decrease the influences of situations that are expected to be situation 2. %, allowing the construction of the signature. 
 %This principle is applied when the average prediction $\overline{S^-}$ is lower than a treshold (we used a value of -0.9), to let the context of interaction corresponding to the affordance starting to emerge in the signature.
 
-Several interactions can be prevented by the presence of an element (e.g. \textit{moving a step forward} is expected to success, until an obstacle appears). In such cases, situations 1' are related to the failure of the interaction, and situations 2' and 3' to its success. As situations 2' and 3' are expected to be more frequent than situations 1', the average of predictions will converge to a positive value. In thus case, the average of positive predictions $\overline{S_i^s}$ is used as a threshold to prevent the signature reinforcement in case of success in an assumed situation 2' (i.e. $S_i(E_t)<\overline{S_i^s}$). %This principle is applied when $\overline{S_i^s}$ is greater than a threshold (we used a threshold of 0.9).
+Symmetrically, some interactions may fail due to the unexpected apparition of an entity in a specific location (e.g., trying to move forward while an obstacle appears in front). 
+%In such cases, situations 1' are related to the failure of the interaction, and situations 2' and 3' to its success. As situations 2' and 3' are expected to be more frequent than situations 1', 
+As success of such interactions are expected to be more frequent then failures, the average of predictions will converge to a positive value. 
+In this case, the average of positive predictions $\overline{S_i^s}$ is used as a threshold to prevent the signature reinforcement in case of success in an assumed situation 2' (i.e. $S_i(E_t)<\overline{S_i^s}$). 
+%This principle is applied when $\overline{S_i^s}$ is greater than a threshold (we used a threshold of 0.9).
 
 
 %and thus are expected to success when the affordance is absent, we also define the average value of positive predictions $\overline{S^s}$. When this average value is greater than a treshold (we used a value of 0.9), a prediction lower than $\overline{S^+}$ is not learned in case of success.
 
-It is also possible to define the ratio of interaction success when the prediction $S(E_t)$ is greater than the average $\overline{S^f}$ (or interaction failure when $S(E_t)$ is lower than the average $\overline{S^s}$), implying that the agent is in a situation of type 1 or 2 (or 1' or 2'). This ratio thus measures the probability that the presence of the affordance actually affords successfully the interaction.
+It is also possible to define the ratio of success when the prediction $S(E_t)$ is greater than the average $\overline{S^f}$ (or failure when $S(E_t)$ is lower than the average $\overline{S^s}$), implying that the agent is in a situation of type 1 or 2.
+% (or 1' or 2'). 
+This ratio thus measures the probability that the interaction will succeed in the presence of the affordance by a mobile entity.
 
 
 
@@ -321,39 +334,40 @@ A consequence of this implementation is that high weights of neurons characteriz
 
 \subsection{Implementation}\label{implementation}
 
-This signature mechanism was tested on an artificial agent moving in a 2-dimensional discrete environment. The sensorimotor possibilities of the agent define a list of five primary interactions, listed below:
+This signature mechanism was tested on an artificial agent moving in the 2-dimensional discrete environment shown in Figure~\ref{fig:environment}. 
+
+The sensorimotor possibilities of the agent define the following five primary interactions:
 
  \begin{tabular}{ l l }
-   - \includegraphics[width=0.015\textwidth]{img/mf0.pdf} move forward by one step, \\
-   - \includegraphics[width=0.015\textwidth]{img/mf1.pdf} bump in a solid element, &
-   - \includegraphics[width=0.02\textwidth]{img/lt0.pdf} turn left by $90^\circ$, \\
-   - \includegraphics[width=0.015\textwidth]{img/mf2.pdf} eat something edible, &
-   - \includegraphics[width=0.02\textwidth]{img/rt0.pdf} turn right by $90^\circ$, \\
+   - \includegraphics[width=0.015\textwidth]{img/mf0.pdf} \textit{move forward} by one step, \\
+   - \includegraphics[width=0.015\textwidth]{img/mf1.pdf} \textit{bump} in a solid element, &
+   - \includegraphics[width=0.02\textwidth]{img/lt0.pdf} \textit{turn left} by $90^\circ$, \\
+   - \includegraphics[width=0.015\textwidth]{img/mf2.pdf} \textit{eat} something edible, &
+   - \includegraphics[width=0.02\textwidth]{img/rt0.pdf} \textit{turn right} by $90^\circ$, \\
  \end{tabular}
 
-Interactions move forward, bump and eat are considered as mutually alternative: intending one of these interactions may lead to the enaction of one of the two others instead. %(and thus the failure of this interaction).
+Interactions \textit{move forward}, \textit{bump} and \textit{eat} are considered as mutually alternative: intending one of these interactions may lead to the enaction of one of the two others instead. %(and thus the failure of this interaction).
 
-We add a set of secondary interactions provided by the agent’s visual system, that can detect colors among \{red,green, blue\}, and measure distances.  Secondary interactions consist in seeing a red, green or blue element while enacting a primary interaction, at a certain (but initially unknown) position in egocentric space. The interaction bump, that does not produce movement, does not generate visual interactions. We discretize the visual field as a regular grid of 15 × 8 positions centered on the agents that matches the grid of the environment. We thus define 4 × 3 × 15 × 8 = 1440 possible secondary interactions.
+We add a set of secondary interactions provided by the agent’s visual system, that can detect colors among \{red,green, blue\}, and measure distances. 
+Secondary interactions consist in seeing a red, green or blue element while enacting a primary interaction, at a certain (but initially unknown) position in egocentric space. 
+The interaction bump, that does not produce movement, does not generate visual interactions. 
+We discretize the visual field as a regular grid of 15 × 8 positions centered on the agents that matches the grid of the environment. 
+We thus define 4 × 3 × 15 × 8 = 1440 possible secondary interactions.
 Signatures are implemented as sets of 6 neurons. % (Section V discusses on the possibilities of dynamic arrays of neurons).
-As we only study the emergence of signatures, we define a unique learning mechanism that foster interactions with low certitude of success or failure (low $|S_i(E_t)|$). %Note that a secondary interaction can be candidate if its associated primary interaction is predicted as a success with a high certitude.
+As we only study the emergence of signatures, we define a unique learning mechanism that foster interactions with low certitude of success or failure (low $|S_i(E_t)|$). 
+%Note that a secondary interaction can be candidate if its associated primary interaction is predicted as a success with a high certitude.
 
-The environment is populated by three types of objects offering spatial regularities that the agent can discover by interacting with them, and characterized by a color that makes them recognizable through agent's sensorimotor system: 1) wall (green), affording bump, 2) algae (red), that are walkthroughable (and thus useless in the agent's perspective), and 3) fishes (blue), affording eat. Fig. \ref{fig:environment} shows an example of environment configuration.
+The environment contains three types of objects offering spatial regularities that the agent can discover by interacting with them, and characterized by a color that makes them recognizable through agent's sensorimotor system: 1) wall (green), affording bump, 2) algae (red), that are walkthroughable (and thus useless in the agent's perspective), and 3) fish (blue), affording eat. Fig. \ref{fig:environment} shows an example of environment configuration.
+The fish move randomly in the environment: at each simulation step, a fish can move in one of these five directions, with a probability of 20\%: immobile, left, right, top, bottom. If the fish cannot move in the selected direction because of an obstacle (wall, alga or other fish), the fish remains at its current position, making the immobile situation slightly more probable than other directions. This random movement simulates agents with unknown behavior.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.28]{img/environment.pdf}}
-\caption{Test environment. The agent is represented as a grey shark (bottom left), wall as green blocks, algae as red leafs and mobile preys as blue fishes. At each simulation step, the fish has 20\% of remaining at current position or to move up, down, left and right. This behavior simulate an agent with unknown decisional mechanism.}
+\caption{Test environment. The agent is represented as a grey shark (bottom left), wall as green blocks, algae as red leafs and mobile preys as blue fishes. At each simulation step, the fish has 20\% of remaining at current position or to move up, down, left and right. 
+%This behavior simulate an agent with unknown decisional mechanism.
+}
 \label{fig:environment}
 \end{figure}
 
-The fishes move randomly in the environment: at each simulation step, a fish can move in one of these five directions, with a probability of 20\%: immobile, left, right, top, bottom. If the fish cannot move in the selected direction because of an obstacle (wall, alga or other fish), the fish remains at its current position, making the immobile situation slightly more probable than other directions. This random movement simulates agents with unknown behavior.
-%All object are opaques: the agent cannot perceive an element behind another one.
-
-
-%\begin{figure}[htbp]
-%\centerline{\includegraphics[scale=0.5]{img/Signatures1.pdf}}
-%\caption{Signatures of bump (left column), and seeing green while moving forward (middle) and seeing red while turning left (right) at positions identified by a red square. These signatures were recorded after 100 000 simulation steps. A signature is characterized by a set of weights of 7 formal neurons. As external observers, we can organize these weights to make signatures more readable. First, weights of secondary interaction are grouped according to their associated primary interaction (from top to bottom: forward, eat, turn left, turn right). Weights associated to primary interactions and the bias are represented with squares below. Then each group is organized to match the associated position in space, relative to the agent (orange triangle). Finally, colors are overlapped to generate signatures under the form of a RGB image. As these signatures identified a unique context affording these interaction, unused neurons' weights are not represented. Interaction bump (left) is afforded by a green object in front of the agent, but also after bumping. The offset between the position associated to visual interactions and the position of their affordance correspond to the movement produced by their associated primary interaction. This property is exploited to project signatures and detect distant affordances.}
-%\label{fig}
-%\end{figure}
 
 
 We then let the agent behaves in its environment, driven by the signature learning mechanism. Signature of bump (Fig.~\ref{fig:bump} emerges and stabilizes within 5000 simulation steps. The signature is similar to signature obtained in static environments [ ], and associates the success of bump to the presence of 'seeing a green element in the position in front of the agent', and of a previously enacted 'bump'. The signature thus gathered every interaction allowing to detect the presence of a wall in front of the agent. % these interactions, even through they are associated to different primary interactions. %, showing how a signature can gather multiple sensory modalities.
@@ -374,9 +388,12 @@ We then let the agent behaves in its environment, driven by the signature learni
 
 
 
-
-
-
+We then let the agent behave in its environment, driven by the signature learning mechanism. 
+The signature of \textit{bump} emerges and stabilizes within 5000 simulation steps (Figure~\ref{fig:bump}). 
+It is similar to the signature obtained in static environments [ ].
+It associates the success of \textit{bump} with the presence of \textit{seeing a green element} localized in front of the agent, and of a previously enacted \textit{bump}. 
+The signature thus gathered every interaction allowing to detect the presence of a wall in front of the agent. 
+% these interactions, even through they are associated to different primary interactions. %, showing how a signature can gather multiple sensory modalities.
 
 Signatures of secondary interactions related to static elements (seeing red and seeing green) progressively stabilize, depending of they frequency of occurrence. After 50 000 simulation steps, most of these signatures stabilized. These signatures are also similar to signatures obtained in static environments [ ]. They designate elements of the same color but on a different position in space. From an external point of view, the spatial offset between the visual interaction and the element designated by its signature matches the movement performed by the enation of its associated primary interaction. This property is used for distant affordance detection [ ] (details in Section IV).
 
