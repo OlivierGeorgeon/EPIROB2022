@@ -58,8 +58,8 @@ developmental learning, interactionism, affordance, autonomous mental developmen
 We address the problem of how an artificial agent that learns an emergent model of its environment through interaction can acquire knowledge about mobile entities that move freely in the environment (e.g., other agents).
 
 This study is situated within the framework of artificial constructivist learning \cite[e.g.,][]{wang_new_2012} and enactive learning \cite[e.g.,][]{froese2009enactiveAI}.
-In this framework, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget2013construction}, and called \textit{interactions}.
-The agent starts with a predefined set of uninterpreted \textit{interactions} associated with predefined numerical \textit{valences}, and seeks to enact interactions with positive valences and avoids interactions with negative valences.
+In this framework, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget2013construction} we call \textit{interactions}.
+The agent starts with a predefined set of uninterpreted \textit{interactions} associated with predefined numerical \textit{valences}, and seeks to enact interactions of positive valence and to avoid interactions of negative valence.
 Such software endows the agent with a kind of self motivation that we have called \textit{interactional motivation} \cite{georgeon_interactional_2012}.
 This view on self motivation relates to the notion of \textit{intrinsic motivation} of artificial agents for \textit{developmental learning} \cite[e.g.,][]{oudeyer_intrinsic_2007}.
 For a complete description, we refer the reader to our previous papers in which we have called this approach \textit{Radical Interactionism} (RI) \cite{georgeon:radical} and \textit{artificial interactionism} \cite{GuillerminGeorgeon2022}. 
@@ -70,7 +70,7 @@ The agent has no \textit{a priori} knowledge on its perception nor on its enviro
 Through this integration of mobile entities,
 we pursue the long-term goal of allowing the emergence of social interactions within groups of artificial agents \cite[e.g.,][]{nsfkatz10}. Generating such collective behaviors requires overcoming two main problems:
 
-1) learning to define, recognize and localize other agents that make individual movements in the environment,
+1) learning to define, recognize and localize other agents that make random movements in the environment,
 
 2) inferring the intentions of these other agents based on their own environmental contexts.
 
@@ -82,8 +82,8 @@ It is subdivided as follows: Section \ref{RI} summarizes and formalizes the Radi
 
 \section{The Radical Interactionism (RI) Model}\label{RI}
 
-In contrast with most machine learning approaches, an RI agent cannot access states of its environment: its input data is not a percept of a state but an outcome of a control loop, called \textit{interaction}.
-The agent learns and exploits regularities in sequences of interactions offered by its coupling with its environment.
+In contrast with most machine learning approaches, an RI agent cannot directly access the state of its environment: its input data is outcome of control loops rather than percepts of the environment's state.
+The agent learns and exploits regularities in sequences of control loops offered by its coupling with its environment.
 The learning mechanism differs from reinforcement learning (e.g., as it is typically implemented in a Partially Observable Markov Decision Process) by the fact that RI agents have no reward defined as a function of the system's state.
 Our goal is not to design agents that reach predefined goals or maximize a reward value, but to study the construction of emergent models of the environment, and generate open-ended learning and behaviors.
 
@@ -95,11 +95,11 @@ If $i_t = e_t$ then the enaction is a success.
 The agent \textit{did} move forward.
 Otherwise, the enaction of $i_t$ is a failure.
 For example, the agent actually enacted another interaction consisting in \textit{bumping} into an obstacle, which may have a negative valence.
-An RI agent learns to anticipate the results of its interactions, and tries to enact interactions with high valences.
+An RI agent learns to anticipate the results of its interactions, and tries to enact interactions of high valence.
 
 To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model \cite{gay:space} which allows the simultaneous enaction of multiple interactions.
 The PRI considers additional stimuli that cannot be separated from the movement that produced them. The optical flow is an example of such stimuli, that must be associated to a movement to characterize a position in space. Thus, the PRI model considers \textit{primary interactions} as control loops (action,result), and \textit{secondary interactions} as a couple (interaction, stimulus).
-At the end of step $t$, the agent receives, not one, but a set of $k$ enacted interactions $E_t=\{e_{1,t},..., e_{k,t}\} \subset I$, containing a primary interaction and a set of secondary interactions associated to this primary interaction.
+At the end of step $t$, the agent receives, not one, but a set of $k$ enacted interactions $E_t=\{e_{1,t},..., e_{k,t}\} \subset I$, containing a primary interaction and a set of secondary interactions associated with this primary interaction.
 
 Previous PRI experiments showed that the agent was able to define, recognize and localize affordances (possibilities of enacting an interaction \cite{gibson:affordances}), and to store and keep track of them in an emergent structure, called Space Memory \cite{gay:space}. This memory generates an implicit context of affordances that the agent can exploit to generate behaviors in accordance with its interactional motivation.
 A subsequent model also showed the possibility to identify objects that moved in a straight line, by considering sequences of consecutive interactions \cite{gay:dynamic}. 
@@ -110,9 +110,10 @@ These models, however, could not integrate entities moving randomly (other agent
 \section{Integrating Mobile Affordances}\label{signatures}
 
 This section explains the \textit{signature mechanism} \cite{gay:space} by which the agent estimates the possibility of enacting interactions in a given context.
-This mechanism is based on the assumption that the enaction result of an interaction $i$ depends on a limited context of elements in the environment, defining the \textit{affordance} of $i$. As a PRI agent can only perceive its environment through enacted interactions, we define the signature $S_i$ of an interaction i as an emerging structure characterizing one (or more) ensemble(s) of interactions $\{j_k\}$ whose enaction (i.e. $\{j_k\} \in E_{t}$ ) can characterize the presence of an element affording $i$ for next step $t+1$.
+This mechanism is based on the assumption that the enaction result of an interaction $i$ depends on a limited context of elements in the environment, defining the \textit{affordance} of $i$. 
+As a PRI agent can only perceive its environment through enacted interactions, we define the signature $S_i$ of an interaction i as an emerging structure characterizing one (or more) set(s) of interactions $\{j_k\}$ whose enaction (i.e. $\{j_k\} \in E_{t}$ ) can characterize the presence of an element affording $i$ for next step $t+1$.
 
-Defining objects by learning affordances they provide is abundant in literature
+Defining objects by learning the affordances they provide is abundant in literature
 (e.g. \cite{paola:affordance}\cite{baleia:affordance}\cite{ugur:traversability}).
 Most of these approaches define affordances from perception, which limit the detection to next action, or requires prior knowledge on environment and space (e.g. \cite{manoury:affordance}) to detect distant affordances. Signatures cope with this limitation by using interactions instead of perception, allowing to exploit spatial properties implicitly encoded in interactions to detect distant affordances.
 
@@ -145,7 +146,7 @@ Situations 2 distorts the learning of signatures, as situations 1 and 2 can occu
 
 However, our preliminary tests showed that, despite remaining negative, signature predictions are slightly higher in case of situations 1-2 than in situations 3. Indeed, situations 1 allow contexts of interactions designating the affordance to emerge, while remaining insufficient to predict with a positive value.
 
-We thus propose to use the average prediction in case of failure $\overline{S_i^f}$ as a threshold to distinguish between situations 2 and 3.
+We thus use the average prediction in case of failure $\overline{S_i^f}$ as a threshold to distinguish between situations 2 and 3.
 When the interaction fails in an assumed situation 2 (i.e., $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limits the influence of situations 2 in signature construction. 
 
 
@@ -161,7 +162,10 @@ It is then possible to define the ratio of success when the prediction $S_i(E_t)
 \subsection{Implementation of Signatures}\label{contexts}
 
 
-We propose a signature architecture extending Gay \textit{et al}'s implementation \cite{gay:space}, based on multiple neurons, and illustrated in Fig. \ref{fig:neuron}. Each signature $S_i$ consists of $m$ neurons $N_i^1$ to $N_i^m$~; the neuron with the strongest output defines the prediction of $S_i$. In case of success, the neuron with the strongest output is reinforced, while a failure reinforce all neurons. This competition leads to a specialization of each neuron for a specific context, while they are desensitized from other contexts. Thus, with a sufficient number of neurons, a signature can identify contexts affording its interaction independently.
+We extend Gay \textit{et al}'s signature architecture \cite{gay:space} using multiple neurons as illustrated in Fig. \ref{fig:neuron}. 
+Each signature $S_i$ consists of $m$ neurons $N_i^1$ to $N_i^m$~; the neuron with the strongest output defines the prediction of $S_i$. 
+In case of success, the neuron with the strongest output is reinforced, while a failure reinforces all neurons. 
+This competition leads to a specialization of each neuron for a specific context, while they are desensitized from other contexts. Thus, with a sufficient number of neurons, a signature can identify contexts affording its interaction independently.
 
 Formally, a neuron $N_i^n$ is defined as a set of weights $\{w_k^n\}$, with $Card(\{w_k^n\})=Card(I)$, and an output defined as:
 \begin{equation}
@@ -194,7 +198,9 @@ with $\Delta_i^n=(R_t.W_i + 1)/2 - N_i^n$
 
 
 A consequence of this implementation is that high weights of neurons characterize contexts affording $i$.
-Weights of neurons can be gathered by primary interaction, each group containing a weight related to a primary interaction and weights related to its associated secondary interaction. Thus, a signature $S_i$ can be subdivided into minimal contexts $C_{j,n}^i$, associated with a primary interaction $j$ and a neuron $n$. It is then possible to define the ratio of success $p_{j,n}^i$ of each context $C_{j,n}^i$ by updating it when $j \in E_{t-1}$ and neuron $n$ has the highest activity, and $S_i(E_{t-1})<\overline{S_i^s}$.
+Weights of neurons can be grouped by primary interaction, each group containing a weight related to a primary interaction and weights related to its associated secondary interaction. 
+Thus, a signature $S_i$ can be subdivided into minimal contexts $C_{j,n}^i$, associated with a primary interaction $j$ and a neuron $n$. 
+It is then possible to define the ratio of success $p_{j,n}^i$ of each context $C_{j,n}^i$ by updating it when $j \in E_{t-1}$ and neuron $n$ has the highest activity, and $S_i(E_{t-1})<\overline{S_i^s}$.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.55]{img/signature_model2.pdf}}
@@ -218,20 +224,20 @@ The sensorimotor possibilities of the agent define the following five primary in
 Interactions \textit{move forward}, \textit{bump} and \textit{eat} are considered as mutually alternative: intending one of these interactions may lead to the enaction of one of the two others instead.
 
 We add a set of secondary interactions provided by the agent’s visual system, that can detect colors and measure distances, with a field of view of 180°.
-Secondary interactions consist in \textit{seeing} a red, green or blue element at a certain (but unknown) position in egocentric space, while enacting a primary interaction.
+Secondary interactions consist in \textit{seeing} the displacement of a red, green or blue entity at a certain (but unknown) position in egocentric space, while enacting a primary interaction.
 Interaction \textit{bump} does not generate visual interactions (no movement).
-We discretize the visual field as a regular grid of 15 × 8 positions in front of the agents that matches the environment's grid.
+We discretize the visual field as a grid of 15 × 8 positions in front of the agents that matches the environment's grid.
 We thus define 4 × 3 × 15 × 8 = 1440 secondary interactions.
 Signatures are implemented as sets of $m=6$ neurons.
 The signature learning process is driven by a learning mechanism that foster interactions with low certainty of success or failure (low $|S_i(E_t)|$).
 
 The environment contains three types of objects offering spatial regularities that the agent can discover by interacting with them, and characterized by a color that makes them recognizable through its sensorimotor system: 1) wall (green), affording bump, 2) algae (red), that are walkthroughable (and thus useless in the agent's perspective), and 3) fish (blue), affording eat.
-The fish move randomly: at each simulation step, it can stay immobile, or move left, right, up or down, with a probability of 20\% for each possibility.
+The fish move randomly: at each simulation step, they can stay immobile, or move left, right, up, or down, with a probability of 20\% each.
 If the fish cannot move in the selected direction because of an obstacle (wall, alga or other fish), it remains immobile, making the immobile situation slightly more probable than other directions. This random movement simulates agents with unknown behavior.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.28]{img/environment.pdf}}
-\caption{Test environment. The agent is represented as a grey shark (bottom left), wall as green blocks, algae as red leafs and mobile preys as blue fishes. At each simulation step, the fish has 20\% of remaining at current position or to move up, down, left and right.
+\caption{Test environment. The agent is represented as a grey shark (bottom left), wall as green blocks, algae as red leafs and mobile preys as blue fishes. At each simulation step, the fish has 20\% of remaining at current position or to move up, down, left, or right.
 }
 \label{fig:environment}
 \end{figure}
@@ -239,7 +245,11 @@ If the fish cannot move in the selected direction because of an obstacle (wall, 
 
 
 
-We then let the agent behaves in its environment, driven by the signature learning mechanism. Signature of bump (Fig.~\ref{fig:bump}) emerges and stabilizes within 5000 simulation steps. The signature is similar to signature obtained in previous environments \cite{gay:space}\cite{gay:dynamic}, and associates the success of bump to the presence of 'seeing a green element in the position in front of the agent', and of a previously enacted \textit{bump}. The signature thus gathered every interaction allowing to detect the presence of a wall in front of the agent, even through they come from different sensory modalities.
+We then let the agent behave in its environment, driven by the signature learning mechanism. 
+Signature of bump (Fig.~\ref{fig:bump}) emerges and stabilizes within 5000 simulation steps. 
+The signature is similar to signatures obtained in previous environments \cite{gay:space}\cite{gay:dynamic}.
+It associates the success of \textit{bump} with the presence of \textit{seeing a green element moving right in front of the agent}, and of a previously enacted \textit{bump}. 
+The signature thus gathered every interaction allowing to detect the presence of a wall in front of the agent, even through they come from different sensory modalities.
 
 \begin{figure}[ht]
 \centerline{\includegraphics[scale=0.35]{img/Signatures1_5.pdf}}
