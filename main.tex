@@ -253,17 +253,34 @@ The signature thus gathered every interaction allowing to detect the presence of
 
 \begin{figure}[ht]
 \centerline{\includegraphics[scale=0.35]{img/Signatures1_5.pdf}}
-\caption{Signatures of interaction \textit{bump}, recorded after 100 000 simulation steps. A signature is characterized by the weights of 6 formal neurons, each neuron being represented by a column. As the signature identified a unique context, we only represent weights of one neuron. As external observers, we can organize weights of a neuron to make signatures more readable: first, weights associated with primary interactions are represented with five squares below (green for a positive weight, red for a negative weight). Weights associated with secondary interaction are grouped according to their primary interaction, forming the four groups (from top to bottom: forward, eat, turn left, turn right ; bump does not produce visual interactions). Each group is organized to place visual interaction with their associated position in space, relative to the agent (orange triangle). Colors associated with visual interactions are overlapped to generate signatures under the form of a RGB image. Signature of bump identified a context that consist of seeing a green element in front of the agent, which correspond, for an external observer, to the presence of a wall in front of the agent. Bump is also related to the success of bump, as it can bump repeatedly.
+\caption{Signatures of interaction \textit{bump}, recorded after 100 000 simulation steps. A signature is characterized by the weights of 6 formal neurons, each neuron being represented by a column. 
+As the signature identified a unique context, we only represent weights of one neuron. 
+As external observers, we can organize weights of a neuron to make signatures more readable: first, weights associated with primary interactions are represented with five squares below (green for a positive weight, red for a negative weight). 
+Weights associated with secondary interaction are grouped according to their primary interaction, forming the four groups (from top to bottom: forward, eat, turn left, turn right ; bump does not produce visual interactions). 
+Each group is organized to place visual interaction with their associated position in space, relative to the agent (orange triangle). 
+Colors associated with visual interactions are overlapped to generate signatures under the form of a RGB image. 
+Signature of bump identified a context that consist of seeing a green element in front of the agent, which corresponds, for an external observer, to the presence of a wall in front of the agent. 
+Bump is also related to the success of bump, as it can bump repeatedly.
 }
 \label{fig:bump}
 \end{figure}
 
 
 
-Signatures of secondary interactions related to static elements (seeing red and seeing green) progressively stabilize, depending on they frequency of occurrence. After 50 000 simulation steps, most of these signatures stabilized. These signatures are also similar to signatures obtained with static entities \cite{gay:space}\cite{gay:dynamic}. They designate elements of the same color but on a different position in space. From an external point of view, the spatial offset between the visual interaction and the element designated by its signature matches the movement performed by the enaction of its associated primary interaction. This property is used for distant affordance detection \cite{gay:space} (details in Section \ref{localize}).
+Signatures of secondary interactions related to static elements (\textit{seeing red} and \textit{seeing green}) progressively stabilize, depending on their frequency of occurrence. 
+After 50 000 simulation steps, most of these signatures stabilized. 
+These signatures are also similar to signatures obtained with static entities \cite{gay:space}\cite{gay:dynamic}. 
+They designate elements of the same color but on a different position in space. 
+From an external point of view, the spatial offset between the visual interaction and the entity designated by its signature matches the movement performed by the enaction of its associated primary interaction. 
+This property is used for distant affordance detection \cite{gay:space} (details in Section \ref{localize}).
 
 
-Signatures of interactions related to mobile elements require more steps, as they relate to a larger variety of contexts to identify: at least 45 000 steps are required to identify contexts affording \textit{move forward} and \textit{eat}. Signature of interaction eat (Fig.~\ref{fig:eat}) characterizes five contexts corresponding to the five positions of fish that can lead to a success of eat. Note that the position under the agent does not appear in contexts of interactions associated to move forward, as this situation is not possible. The signature of move forward (Fig.~\ref{fig:forward}) has a negative weight $W$. The signature thus shows the affordance that prevents this interaction. The signature designates five contexts associated to the presence of a fish, and one context associated to the presence of a wall in front of the agent.
+Signatures of interactions related to mobile elements require more steps, as they relate to a larger variety of contexts to identify: at least 45 000 steps are required to identify contexts affording \textit{move forward} and \textit{eat}.
+Signature of interaction \textit{eat} (Fig.~\ref{fig:eat}) characterizes five contexts corresponding to the five positions of fish that can lead to a success of eat. 
+Note that the position under the agent does not appear in contexts of interactions associated to move forward, as this situation is not possible. 
+The signature of \textit{move forward} (Fig.~\ref{fig:forward}) has a negative weight $W$. 
+The signature thus shows the affordance that prevents this interaction. 
+The signature designates five contexts associated with the presence of a fish, and one context associated with the presence of a wall in front of the agent.
 
 Signatures of secondary interactions consisting in seeing blue (Fig.~\ref{fig:sigblue}) elements designate five contexts, corresponding to the five positions leading to a success of these interactions, with an offset (from an external point of view) corresponding to the movement of the associated primary interaction.
 
@@ -290,11 +307,16 @@ The signature identifies 5 configurations of fish (front, ahead, left, right, be
 \end{figure}
 
 
-We also analyze the ratio of successful enaction after a prediction of success. The ratios obtained in contexts implying static objects (such as walls) are close to 1 indicating that the presence of this type of affordance implies the success of the interaction. Ratios obtained with mobile fishes are close to 20\%, which correspond to the probability that the fish move in the right direction when the agent tries to eat it. The contexts with a fish in front of the agent is however slightly greater. This can be explained by the fact a prey cannot move to a different position when blocked by a wall or an alga, increasing the probability of eating the fish when in front of the agent. These ratios, summarized in table \ref{tab1}, show that signatures can integrate and encode stochastic properties of the environment.
+We also analyze the ratio of successful enaction after a prediction of success. 
+The ratios obtained in contexts implying static objects (such as walls) are close to 1 indicating that the presence of this type of affordance implies the success of the interaction. 
+Ratios obtained with mobile fish are close to 20\%, which correspond to the probability that the fish moves in the right direction when the agent tries to eat it. 
+The contexts with a fish in front of the agent is however slightly greater. 
+This can be explained by the fact a prey cannot move to a different position when blocked by a wall or an alga, increasing the probability of eating the fish when in front of the agent. 
+These ratios, summarized in table \ref{tab1}, show that signatures can integrate and encode stochastic properties of the environment.
 
 
 \begin{table}[htbp]
-\caption{Average ratios of success when predict a success in contexts wall, fish in front and fish in other positions (surrounding)}
+\caption{Average ratios of successful prediction in contexts: wall, fish in front, and fish in other positions (surrounding)}
 \begin{center}
 \begin{tabular}{|c|c|c|c|}
 \hline
@@ -319,9 +341,12 @@ seeing blue (Fig. \ref{fig:sigblue}) & / & 0.24 & 0.18 \\
 
 
 The detection of distant affordances relies on a property of signatures: a signature of an interaction designates an affordance as sets of interactions ~$\{j_k\} \in \hat{S}_i(1)$ allowing to detect the presence of this affordance.
-However, each interaction $j_k$ can have its own signature. It is thus possible to define, from these signatures $S_{j_k}$, a set of contexts, called \textit{predecessor} $\hat{S}_i^{[j]}$, that, after enacting $j$, afford $i$. The \textit{backmove} principle consists in defining the initial predecessor $\hat{S}_i^{\sigma_0}=\hat{S}_i(1)$, with $\sigma_0=[~]$. Then, recursively project the predecessor $\hat{S}_i^{\sigma_a}$ with:
+However, each interaction $j_k$ can have its own signature. 
+It is thus possible to define, from these signatures $S_{j_k}$, a set of contexts, called \textit{predecessor} $\hat{S}_i^{[j]}$, that, after enacting $j$, afford $i$. 
+The \textit{backmove} principle consists in defining the initial predecessor $\hat{S}_i^{\sigma_0}=\hat{S}_i(1)$, with $\sigma_0=[~]$. 
+Then, recursively project the predecessor $\hat{S}_i^{\sigma_a}$ with:
 $\hat{S}_i^{\sigma_{a+1}}\!=\!\bigcup_{\forall C_l^i \in \hat{S}_i^{\sigma_a} / j \in C_l^i} \{E \in \mathcal{P}(I) / \forall j_k \in C_l^i, S_{j_k}(E)\!>\!0\}$,
-with $\sigma_{a+1}=[j,\sigma_a]$ and $C_l^i=\{j_k\}$ contexts of interactions associated to the same primary interaction $j$.
+with $\sigma_{a+1}=[j,\sigma_a]$ and $C_l^i=\{j_k\}$ contexts of interactions associated with the same primary interaction $j$.
 A predecessor $\hat{S}_i^\sigma$ characterizes a set of contexts that are expected to afford $i$ after enacting sequence $\sigma$.
 Then, when a context $C_l^j \in \hat{S}_i^\sigma$ is observed in $E_t$, a distant affordance of $i$ is assumed to be present at \textit{position} $\sigma$, in egocentric reference.
 
@@ -331,7 +356,7 @@ Then, when a context $C_l^j \in \hat{S}_i^\sigma$ is observed in $E_t$, a distan
 Applying the backmove principle to a signature of a probabilistic affordance would generate a set of predecessor covering all possible future positions of this affordance after enacting a sequence $\sigma$. This would lead to a detection of an affordance through multiple positions, which cannot be exploited by a Space Memory.
 We thus propose to only consider most probable predicted position of an affordance after enacting a sequence $\sigma$.
 
-The proposed backmove method introduces a new structure, called projection sequence. The idea is to split predecessors into individual interactions: for each backmove, each sequence considers a unique interaction of $S_i^{\sigma}$.
+The proposed backmove method introduces a new structure called projection sequence. The idea is to split predecessors into individual interactions: for each backmove, each sequence considers a unique interaction of $S_i^{\sigma}$.
 A projection sequence $\xi$ is a structure characterized by:
 
 - a sequence $\sigma$ of primary interactions, characterizing the movement required to reach the affordance,
@@ -354,8 +379,8 @@ A sequence $\xi_1$ is removed from the list if it exists another sequence $\xi_2
 
 - divergence comes from different contexts (i.e. $\exists k / \lambda_{\xi_1}[k] \in C_l^i, \lambda_{\xi_2}[k] \in C_m^i, C_l^i \neq C_m^i$), implying that $\sigma_{\xi_1}$ and $\sigma_{\xi_2}$  are related to two exclusive future position of the affordance. % instead of the same context.
 
-The set of projection sequences of a signature $S_i$ provides, for each interaction $i \in I$, a set of most probable sequence of interactions linking interactions from a context $E_t$ and elements designated by $S_i$.
-It is then possible to gather sequences $\xi_m$ with the same $\sigma$ and $\lambda_m[0]\in E_t$, and reconstruct contexts $\{\lambda_m[k]\}$ for each step $k$ of $\sigma$, allowing to predict the most probable evolution of an affordance position.
+The set of projection sequences of a signature $S_i$ provides, for each interaction $i \in I$, a set of the most probable sequences of interactions linking interactions from a context $E_t$ with entities designated by $S_i$.
+It is then possible to gather sequences $\xi_m$ with the same $\sigma$ and $\lambda_m[0]\in E_t$, and to reconstruct contexts $\{\lambda_m[k]\}$ for each step $k$ of $\sigma$, allowing  predicting the most probable evolution of an affordance position.
 
 
 
@@ -363,10 +388,10 @@ It is then possible to gather sequences $\xi_m$ with the same $\sigma$ and $\lam
 
 
 A projection sequence of a signature $S_i$ detects a potential affordance of $i$ when its last interaction $\lambda[0]$ is enacted.
-However, a sequence only characterizes a part of the affordance ; a larger part of the context must be evaluated to confirm the presence of the whole affordance.
+However, a sequence only characterizes a part of the affordance; a larger part of the context must be evaluated to confirm the presence of the whole affordance.
 The detection of distant affordances of an interaction $i$ starts by selecting projection sequences $\xi_k^i$ of signature $S_i$ whose last element is enacted, defining \textit{candidate} affordances of $i$. Each candidate $\xi_k^i$ gathers a set $\Theta_{\xi_k^i} = \{\xi_l^i ~/~ \sigma_l = \sigma_k \wedge \lambda_l[0] \in E_t\}$ of sequences, sharing the same $\sigma$ and whose last element $\lambda[0]$ is enacted.
 
-The set $E_{\xi_k^i}^0=\{\lambda_{\xi_l^i}[0] ~/~\xi_l^i \in \Theta_{\xi_k^i}\}$ of last interaction of sequences of $\Theta_{\xi_k^i}$ represents an ensemble $E_{\xi_k^i}^0 \subset E_t$ gathering interactions that can intervene in the detection of the affordance of $i$ at position $\sigma_{\xi_k^i}$.
+The set $E_{\xi_k^i}^0=\{\lambda_{\xi_l^i}[0] ~/~\xi_l^i \in \Theta_{\xi_k^i}\}$ of last interaction of sequences of $\Theta_{\xi_k^i}$ represents a set $E_{\xi_k^i}^0 \subset E_t$ gathering interactions that can intervene in the detection of the affordance of $i$ at position $\sigma_{\xi_k^i}$.
 From a context $E_{\xi_k^i}^a$, the following recursive procedure is applied: a candidate context is defined as $C_{\xi_k^i}^{a+1} = \{\lambda_{\xi_k^i}[a+1] ,~ \lambda_{\xi_k^i} \in \Theta_{\xi_k^i} \} $. Then, each element of $j_k \in C_{\xi_k^i}^{a+1}$ is evaluated with $S_{j_k}(E_{\xi_k^i}^a)$. Interactions predicted as a failure are removed from $C_{\xi_k^i}^{a+1}$, and their projection sequences, removed from $\Theta_{\xi_k^i}$. Remaining interactions define context $E_{\xi_k^i}^{a+1}$. The process is repeated until sequence $\sigma_{\xi_k^i}$ is completed (or until $\Theta_{\xi_k^i}$ is empty). Interaction $i$ is then predicted using $S_i(E^l)$. If the signature predicts a success, the affordance of $i$ is confirmed at position~$\sigma_{\xi_k^i}$.
 
 
@@ -378,25 +403,32 @@ The projection mechanism generates projection sequences with a maximum length up
 The projection sequence construction mechanism was adapted for a signature implementation based on neurons. First, we only project interactions designated by a signature with a weight with an absolute value that is greater than a threshold, eliminating non-significant weights. Then, we added a new property to projection sequences, the global weight, characterizing the pertinence of the sequence to represent the affordance. This global weight is computed as follows: first sequences have a global weight defined as $w^{global} = W_S \times w_k$. Then each backmove through a weight $w_k$ of a signature $S$, the global weight of the new sequence is updated as $w^{global}=w^{global} \times  W_S \times w_k$. The filter mechanism then compare values $p \times w^{global}$ instead of $p$ alone, offering a good compromise between probability and pertinence of sequences.
 
 
-The agent is presented different environment configurations. An enaction cycle is performed to let the agent perceive its environment, and sequences of detected affordances are analyzed.
-Fig. \ref{fig:detect} shows the detection in a context containing two wall blocks, two fishes and an alga. Sequences localizing static objects (walls) allows moving toward them. Sequences localizing fishes does not reach the position of the prey, but a position just next to it. Indeed, as the agent can eat a fish on its side, the resulting sequence is a compromise between probability and length of the sequence. Alga is ignored, as it has the same property as empty space. Thus, the affordance detection mechanism can still detect and localize distant affordances under the form of sequences of interactions, which can be stored and exploited by the space memory similarly than in a static environment.
+The agent is presented to different environment configurations. An enaction cycle is performed to let the agent perceive its environment, and sequences of detected affordances are analyzed.
+Fig. \ref{fig:detect} shows the detection in a context containing two wall blocks, two fish and an alga. Sequences localizing static objects (walls) allows moving toward them. 
+Sequences localizing fish do not reach the position of the prey, but a position just next to it. 
+Indeed, as the agent can eat a fish on its side, the resulting sequence is a compromise between probability and length of the sequence. 
+The alga is ignored since it has the same property as an empty space. 
+Thus, the affordance detection mechanism can still detect and localize distant affordances under the form of sequences of interactions, which can be stored and exploited by the space memory similar as in a static environment.
 
 
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.4]{img/detection.pdf}}
-\caption{Distant affordances are detected and localized through sequences of interactions allowing to reach them. Circles show the position and orientation associated to these sequences (red: not moving forward, blue: eat, green: bump). We can notice that the agent ignore the alga, as it as the same interactional property than an empty space.}
+\caption{Distant affordances are detected and localized through sequences of interactions allowing to reach them. Circles show the position and orientation associated with these sequences (red: not moving forward, blue: eat, green: bump). 
+We can notice that the agent ignores the alga since it as the same interactional property as an empty space.}
 \label{fig:detect}
 \end{figure}
 
 
 \section{Conclusion and Future Work}\label{conclusion}
 
-This work proposes a new mechanism to enable an environmentally agnostic agent to consider mobile and non-predictable entities in its emergent model of the environment. Results obtained in a simulated environment showed that the agent can still localize distant affordances without the notion of space, and define these position in a similar way than in static environment, allowing the use of a Space Memory \cite{gay:space}.
+This work proposes a new mechanism to enable an interactionist agent to consider mobile and non-predictable entities in its emergent model of the environment. 
+Results obtained in a simulated environment showed that the agent can still localize distant affordances without the notion of space, and define their positions in a similar way than in static environment, allowing the use of a Space Memory \cite{gay:space}.
 
-Future work will study how the space memory can be used in such a stochastic environment, and how intrinsically motivated decisional mechanism can integrate probabilities of presence of affordance into consideration.
+Future work will study how the space memory can be used to better interact with other agents, and how the intrinsically motivated decisional mechanism can integrate probabilities of presence of affordance into consideration.
+In multi-agent contexts, this will allow us to study the mutual integration of agents in each other's environmental model, and how these models can be exploited for generating behaviors involving collaborative tasks, such as coordinated hunt of large preys. 
 
-We will also implement these mechanisms in multi-agent contexts, to study the mutual integration of agents in their own environmental model, and how these models can be exploited for generating behaviors solving collaborative tasks, such as coordinate hunting of large preys. We also plan to study the possibility of predicting other agent's intentions through observation of its own context, as a previous implementation of the space memory demonstrated the possibility for reference change, opening intersubjectivity possibilities between agents.
+We will also study how an agent can predict another agent's intentions through the observation of the other agent's context, as a previous implementation of the space memory demonstrated the possibility of reference change, opening intersubjectivity possibilities between agents.
 
 
 \bibliographystyle{IEEEbib}
