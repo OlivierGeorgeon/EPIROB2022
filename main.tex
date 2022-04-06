@@ -58,7 +58,7 @@ developmental learning, interactionism, affordance, autonomous mental developmen
 We address the problem of how an artificial agent that learns an emergent model of its environment through interaction can acquire knowledge about mobile entities that move freely in the environment (e.g., other agents).
 
 This study is situated within the framework of artificial constructivist learning \cite[e.g.,][]{wang_new_2012} and enactive learning \cite[e.g.,][]{froese2009enactiveAI}.
-In this framework, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget2013construction} we call \textit{interactions}.
+In this framework, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget2013construction}, which we call \textit{interactions}.
 The agent starts with a predefined set of uninterpreted \textit{interactions} associated with predefined numerical \textit{valences}, and seeks to enact interactions of positive valence and to avoid interactions of negative valence.
 Such software endows the agent with a kind of self motivation that we have called \textit{interactional motivation} \cite{georgeon_interactional_2012}.
 This view on self motivation relates to the notion of \textit{intrinsic motivation} of artificial agents for \textit{developmental learning} \cite[e.g.,][]{oudeyer_intrinsic_2007}.
@@ -70,7 +70,7 @@ The agent has no \textit{a priori} knowledge on its perception nor on its enviro
 Through this integration of mobile entities,
 we pursue the long-term goal of allowing the emergence of social interactions within groups of artificial agents \cite[e.g.,][]{nsfkatz10}. Generating such collective behaviors requires overcoming two main problems:
 
-1) learning to define, recognize and localize other agents that make random movements in the environment,
+1) learning to define, recognize and localize other agents that make self-motivated movements in the environment,
 
 2) inferring the intentions of these other agents based on their own environmental contexts.
 
@@ -80,17 +80,18 @@ It is subdivided as follows: Section \ref{RI} summarizes and formalizes the Radi
 
 
 
-\section{The Radical Interactionism (RI) Model}\label{RI}
+\section{The Radical Interactionism (RI) approach}\label{RI}
 
 In contrast with most machine learning approaches, an RI agent cannot directly access the state of its environment: its input data is outcome of control loops rather than percepts of the environment's state.
 The agent learns and exploits regularities in sequences of control loops offered by its coupling with its environment.
 The learning mechanism differs from reinforcement learning (e.g., as it is typically implemented in a Partially Observable Markov Decision Process) by the fact that RI agents have no reward defined as a function of the system's state.
 Our goal is not to design agents that reach predefined goals or maximize a reward value, but to study the construction of emergent models of the environment, and generate open-ended learning and behaviors.
 
-Let $I$ be the set of predefined primitive interactions (control loops), and $\nu_i \in \mathbb{R}$ the predefined valence of primitive interaction $i \in I$.
+Let $I$ be the set of predefined primitive interactions (control loops).
+% and $\nu_i \in \mathbb{R}$ the predefined valence of primitive interaction $i \in I$.
 At the beginning of step $t$, the agent selects an \textit{intended interaction} $i_t \in I$.
 An example consists in moving a step forward.
-At the end of step $t$, the agent is informed of the \textit{enacted interaction} $e_t \in I$ that was actually enacted. 
+At the end of step $t$, the agent receives the \textit{enacted interaction} $e_t \in I$ that was actually enacted. 
 If $i_t = e_t$ then the enaction is a success. 
 The agent \textit{did} move forward.
 Otherwise, the enaction of $i_t$ is a failure.
@@ -99,11 +100,12 @@ An RI agent learns to anticipate the results of its interactions, and tries to e
 
 To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model \cite{gay:space} which allows the simultaneous enaction of multiple interactions.
 The PRI considers additional stimuli that cannot be separated from the movement that produced them. The optical flow is an example of such stimuli, that must be associated to a movement to characterize a position in space. Thus, the PRI model considers \textit{primary interactions} as control loops (action,result), and \textit{secondary interactions} as a couple (interaction, stimulus).
-At the end of step $t$, the agent receives, not one, but a set of $k$ enacted interactions $E_t=\{e_{1,t},..., e_{k,t}\} \subset I$, containing a primary interaction and a set of secondary interactions associated with this primary interaction.
+At the end of step $t$, the agent receives, not one, but a set of $k$ enacted interactions $E_t=\{e_1,..., e_k\} \subset I$, containing a primary interaction and a set of secondary interactions associated with this primary interaction.
 
 Previous PRI experiments showed that the agent was able to define, recognize and localize affordances (possibilities of enacting an interaction \cite{gibson:affordances}), and to store and keep track of them in an emergent structure, called Space Memory \cite{gay:space}. This memory generates an implicit context of affordances that the agent can exploit to generate behaviors in accordance with its interactional motivation.
 A subsequent model also showed the possibility to identify objects that moved in a straight line, by considering sequences of consecutive interactions \cite{gay:dynamic}. 
-These models, however, could not integrate entities moving randomly (other agents). The present study addresses this limitation.
+These models, however, could not integrate entities moving irregularly (other agents).
+The present study addresses this limitation.
 
 
 
@@ -111,18 +113,20 @@ These models, however, could not integrate entities moving randomly (other agent
 
 This section explains the \textit{signature mechanism} \cite{gay:space} by which the agent estimates the possibility of enacting interactions in a given context.
 This mechanism is based on the assumption that the enaction result of an interaction $i$ depends on a limited context of elements in the environment, defining the \textit{affordance} of $i$. 
-As a PRI agent can only perceive its environment through enacted interactions, we define the signature $S_i$ of an interaction i as an emerging structure characterizing one (or more) set(s) of interactions $\{j_k\}$ whose enaction (i.e. $\{j_k\} \in E_{t}$ ) can characterize the presence of an element affording $i$ for next step $t+1$.
+As a PRI agent can only perceive its environment through enacted interactions, we define the signature $S_i$ of an interaction $i$ as an emerging structure characterizing one or several sets of interactions (i.e. $\{j_k\} \subset E_{t}$) whose enaction  can characterize the presence of an element affording $i$ for next step $t+1$.
 
-Defining objects by learning the affordances they provide is abundant in literature
-(e.g. \cite{paola:affordance}\cite{baleia:affordance}\cite{ugur:traversability}).
-Most of these approaches define affordances from perception, which limit the detection to next action, or requires prior knowledge on environment and space (e.g. \cite{manoury:affordance}) to detect distant affordances. Signatures cope with this limitation by using interactions instead of perception, allowing to exploit spatial properties implicitly encoded in interactions to detect distant affordances.
+Defining objects by learning the affordances they provide is abundant in literature, e.g., 
+\cite{paola:affordance, baleia:affordance, ugur:traversability}.
+Most of these approaches define affordances from perception, which limit the detection to next action, or requires prior knowledge on environment and space \cite[e.g.,][]{manoury:affordance} to detect distant affordances. 
+Signatures cope with this limitation by using interactions instead of perception, allowing to exploit spatial properties implicitly encoded in interactions to detect distant affordances.
 
 
 Formally, a \textit{signature of interaction} is a function $S_i : \mathcal{P}(I) \rightarrow [-1;1]$, where $\mathcal{P}(I)$ is the partition of $I$, i.e., the set of all possible contexts.
-$S_i(E_{t}) \in [-1, 1]$ gives the certainty of successfully enacting interaction $i$ at step $t+1$: 1 for certainty of success, -1 for certainty of failure.
-To improve estimations, the agent adjusts $S_i$ each time $i$ succeeds or fails.
+$S_i(E_{t}) \in [-1, 1]$ gives the prediction of successfully enacting interaction $i$ at step $t+1$: 1 for certainty of success, -1 for certainty of failure.
+%²To improve estimations, 
+The agent adjusts the parameters of $S_i$ each time $i$ succeeds or fails.
 
-Signatures must be \textit{reversible}: they allow defining a reverse function $\hat{S}_i : \{-1;1\} \rightarrow \mathcal{P}(\mathcal{P}(I))$ such that  $\hat{S}_i(1)$ gives the set of minimal contexts $C_l^i$ in which $i_t$ is possible, i.e. contexts that \textit{afford} $i$, and $\hat{S}_i(-1)$ gives the set of minimal contexts in which the enaction of $i$ is impossible.
+Signatures must be \textit{reversible}: they allow defining a pseudo-reverse function $\hat{S}_i : \{-1;1\} \rightarrow \mathcal{P}(\mathcal{P}(I))$ such that  $\hat{S}_i(1)$ gives the set of minimal contexts $C_l^i$ in which $i$ is possible, i.e. contexts that \textit{afford} $i$, and $\hat{S}_i(-1)$ gives the set of minimal contexts in which the enaction of $i$ is impossible.
 
 
 However, when interacting with mobile entities, the presence of an affordance at the end of step $t$ does not guaranty that the interaction can be enacted during step $t+1$ because the entity may move in the meantime. We thus propose to separate the estimation of the presence of an affordance from the probability of success of enacting the interaction.
@@ -228,7 +232,7 @@ Secondary interactions consist in \textit{seeing} the displacement of a red, gre
 Interaction \textit{bump} does not generate visual interactions (no movement).
 We discretize the visual field as a grid of 15 × 8 positions in front of the agents that matches the environment's grid.
 We thus define 4 × 3 × 15 × 8 = 1440 secondary interactions.
-Signatures are implemented as sets of $m=6$ neurons.
+Signatures are implemented using sets of $m=6$ neurons.
 The signature learning process is driven by a learning mechanism that foster interactions with low certainty of success or failure (low $|S_i(E_t)|$).
 
 The environment contains three types of objects offering spatial regularities that the agent can discover by interacting with them, and characterized by a color that makes them recognizable through its sensorimotor system: 1) wall (green), affording bump, 2) algae (red), that are walkthroughable (and thus useless in the agent's perspective), and 3) fish (blue), affording eat.
@@ -343,7 +347,7 @@ seeing blue (Fig. \ref{fig:sigblue}) & / & 0.24 & 0.18 \\
 The detection of distant affordances relies on a property of signatures: a signature of an interaction designates an affordance as sets of interactions ~$\{j_k\} \in \hat{S}_i(1)$ allowing to detect the presence of this affordance.
 However, each interaction $j_k$ can have its own signature. 
 It is thus possible to define, from these signatures $S_{j_k}$, a set of contexts, called \textit{predecessor} $\hat{S}_i^{[j]}$, that, after enacting $j$, afford $i$. 
-The \textit{backmove} principle consists in defining the initial predecessor $\hat{S}_i^{\sigma_0}=\hat{S}_i(1)$, with $\sigma_0=[~]$. 
+The \textit{backmove} principle consists in defining the initial predecessor $\hat{S}_i^{\sigma_0}=\hat{S}_i(1)$, with $\sigma_0=\langle\rangle$ (empty sequence). 
 Then, recursively project the predecessor $\hat{S}_i^{\sigma_a}$ with:
 $\hat{S}_i^{\sigma_{a+1}}\!=\!\bigcup_{\forall C_l^i \in \hat{S}_i^{\sigma_a} / j \in C_l^i} \{E \in \mathcal{P}(I) / \forall j_k \in C_l^i, S_{j_k}(E)\!>\!0\}$,
 with $\sigma_{a+1}=[j,\sigma_a]$ and $C_l^i=\{j_k\}$ contexts of interactions associated with the same primary interaction $j$.
@@ -366,7 +370,7 @@ A projection sequence $\xi$ is a structure characterized by:
 - a probability $p$ characterizing the probability of enacting $i$ from the partial affordance characterized by the sequence.
 
 
-The set of projection sequence is constructed as follows: from a signature $S_i$, a first set of sequence $([\:], [j_k], p_0)$ is generated for each interaction $j_k$ designated by $S_i$, where $\sigma=[\: ]$ (empty backmove sequence), $\lambda=[j_k]$,
+The set of projection sequence is constructed as follows: from a signature $S_i$, a first set of sequence $(\sigma_0, \lambda_0, p_0)$ is generated for each interaction $j_k$ designated by $S_i$, where $\sigma=[\: ]$, $\lambda=[j_k]$,
 and $p$ is the success ratio of the context $C_l^i$ containing $j_k$. Note that this set characterizes $S_i$ under the form of projection sequences.
 
 Then, the set of sequences is recursively backmoved. A sequence $(\sigma, \lambda, \eta, p)$ leads to interaction $\lambda[0]$. This sequence is backmoved by primitive interaction $j$ associated to $\lambda[0]$ (or by $\lambda[0]$ if primary): from signature $S_{\lambda[0]}$, a set of sequences $([j,\sigma], [j_k,\lambda], [n,\eta], p*p_{S_{\lambda[0]}^{j,n}})$ is generated, for each interaction $j_k$ designated by $S_{\lambda[0]}$.
@@ -392,7 +396,13 @@ However, a sequence only characterizes a part of the affordance; a larger part o
 The detection of distant affordances of an interaction $i$ starts by selecting projection sequences $\xi_k^i$ of signature $S_i$ whose last element is enacted, defining \textit{candidate} affordances of $i$. Each candidate $\xi_k^i$ gathers a set $\Theta_{\xi_k^i} = \{\xi_l^i ~/~ \sigma_l = \sigma_k \wedge \lambda_l[0] \in E_t\}$ of sequences, sharing the same $\sigma$ and whose last element $\lambda[0]$ is enacted.
 
 The set $E_{\xi_k^i}^0=\{\lambda_{\xi_l^i}[0] ~/~\xi_l^i \in \Theta_{\xi_k^i}\}$ of last interaction of sequences of $\Theta_{\xi_k^i}$ represents a set $E_{\xi_k^i}^0 \subset E_t$ gathering interactions that can intervene in the detection of the affordance of $i$ at position $\sigma_{\xi_k^i}$.
-From a context $E_{\xi_k^i}^a$, the following recursive procedure is applied: a candidate context is defined as $C_{\xi_k^i}^{a+1} = \{\lambda_{\xi_k^i}[a+1] ,~ \lambda_{\xi_k^i} \in \Theta_{\xi_k^i} \} $. Then, each element of $j_k \in C_{\xi_k^i}^{a+1}$ is evaluated with $S_{j_k}(E_{\xi_k^i}^a)$. Interactions predicted as a failure are removed from $C_{\xi_k^i}^{a+1}$, and their projection sequences, removed from $\Theta_{\xi_k^i}$. Remaining interactions define context $E_{\xi_k^i}^{a+1}$. The process is repeated until sequence $\sigma_{\xi_k^i}$ is completed (or until $\Theta_{\xi_k^i}$ is empty). Interaction $i$ is then predicted using $S_i(E^l)$. If the signature predicts a success, the affordance of $i$ is confirmed at position~$\sigma_{\xi_k^i}$.
+From a context $E_{\xi_k^i}^a$, the following recursive procedure is applied: a candidate context is defined as $C_{\xi_k^i}^{a+1} = \{\lambda_{\xi_k^i}[a+1] ,~ \lambda_{\xi_k^i} \in \Theta_{\xi_k^i} \} $. 
+Then, each element $j_k \in C_{\xi_k^i}^{a+1}$ is evaluated with $S_{j_k}(E_{\xi_k^i}^a)$. 
+Interactions predicted as a failure are removed from $C_{\xi_k^i}^{a+1}$, and their projection sequences, removed from $\Theta_{\xi_k^i}$. 
+Remaining interactions define context $E_{\xi_k^i}^{a+1}$. 
+The process is repeated until sequence $\sigma_{\xi_k^i}$ is completed (or until $\Theta_{\xi_k^i}$ is empty). 
+Interaction $i$ is then predicted using $S_i(E^l)$. 
+If the signature predicts a success, the affordance of $i$ is confirmed at position~$\sigma_{\xi_k^i}$.
 
 
 \subsection{Test Environments}\label{test}
@@ -415,7 +425,7 @@ Thus, the affordance detection mechanism can still detect and localize distant a
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.4]{img/detection.pdf}}
 \caption{Distant affordances are detected and localized through sequences of interactions allowing to reach them. Circles show the position and orientation associated with these sequences (red: not moving forward, blue: eat, green: bump). 
-We can notice that the agent ignores the alga since it as the same interactional property as an empty space.}
+We can notice that the agent ignores the alga since it has the same interactional property as an empty space.}
 \label{fig:detect}
 \end{figure}
 
