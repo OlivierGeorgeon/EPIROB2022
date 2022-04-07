@@ -59,20 +59,21 @@ We address the problem of how an artificial agent that learns an emergent model 
 
 This study is situated within the framework of artificial constructivist learning \cite[e.g.,][]{wang_new_2012} and enactive learning \cite[e.g.,][]{froese2009enactiveAI}.
 In this framework, the learning occurs through the enaction of control loops that implement Piagetian \textit{sensorimotor schemes} \cite{piaget2013construction}, which we call \textit{interactions}.
+This framework also relates to the notion of \textit{intrinsic motivation} of artificial agents for \textit{developmental learning} \cite[e.g.,][]{oudeyer:motivation}.
+
+More precisely, we investigate a modeling hypothesis called \textit{Radical Interactionism} (RI) \cite{georgeon:radical} and \textit{artificial interactionism} \cite{GuillerminGeorgeon2022}.  
+We implement a kind of self motivation called \textit{interactional motivation} \cite{georgeon_interactional_2012}.
 The agent starts with a predefined set of uninterpreted \textit{interactions} associated with predefined numerical \textit{valences}, and seeks to enact interactions of positive valence and to avoid interactions of negative valence.
-Such software endows the agent with a kind of self motivation that we have called \textit{interactional motivation} \cite{georgeon_interactional_2012}.
-This view on self motivation relates to the notion of \textit{intrinsic motivation} of artificial agents for \textit{developmental learning} \cite[e.g.,][]{oudeyer_intrinsic_2007}.
-For a complete description, we refer the reader to our previous papers in which we have called this approach \textit{Radical Interactionism} (RI) \cite{georgeon:radical} and \textit{artificial interactionism} \cite{GuillerminGeorgeon2022}. 
 Overall, the learning is \textit{unsupervised}. 
-The agent has no \textit{a priori} knowledge on its perception nor on its environment.
+There are no human-defined labels attached with perceptions, actions, or categories of entities, not even spatial localization of percepts.
+% The agent has initially no \textit{a priori} knowledge about its perception nor on its environment.
 
-
-Through this integration of mobile entities,
-we pursue the long-term goal of allowing the emergence of social interactions within groups of artificial agents \cite[e.g.,][]{nsfkatz10}. Generating such collective behaviors requires overcoming two main problems:
+Through the learing of interaction with other mobile entities,
+we pursue the long-term goal of allowing the emergence of social behaviors within groups of artificial agents \cite[e.g.,][]{nsfkatz10}, for example collective hunting. Generating such behaviors requires overcoming two main problems:
 
 1) learning to define, recognize and localize other agents that make self-motivated movements in the environment,
 
-2) inferring the intentions of these other agents based on their own environmental contexts.
+2) inferring the intentions of other agents based on their own environmental contexts.
 
 This paper focuses on the resolution of the first problem. 
 It is subdivided as follows: Section \ref{RI} summarizes and formalizes the Radical Interactionism model, Section \ref{signatures} presents a model for defining and recognizing probabilistic affordances, and Section \ref{localize} presents a mechanism to recognize and localize distant probabilistic affordances in space. Finally, Section \ref{conclusion} encompasses some conclusive remarks and future development of the intersubjectivity problem.
@@ -80,25 +81,25 @@ It is subdivided as follows: Section \ref{RI} summarizes and formalizes the Radi
 
 
 
-\section{The Radical Interactionism (RI) approach}\label{RI}
+\section{The Radical Interactionist (RI) hypothesis}\label{RI}
 
 In contrast with most machine learning approaches, an RI agent cannot directly access the state of its environment: its input data is outcome of control loops rather than percepts of the environment's state.
 The agent learns and exploits regularities in sequences of control loops offered by its coupling with its environment.
 The learning mechanism differs from reinforcement learning (e.g., as it is typically implemented in a Partially Observable Markov Decision Process) by the fact that RI agents have no reward defined as a function of the system's state.
-Our goal is not to design agents that reach predefined goals or maximize a reward value, but to study the construction of emergent models of the environment, and generate open-ended learning and behaviors.
+Our goal is not to design agents that reach predefined goals or maximize a reward value, but to study the open-ended learning of emergent models of the environment, and to generate social behaviors.
 
 Let $I$ be the set of predefined primitive interactions (control loops).
 % and $\nu_i \in \mathbb{R}$ the predefined valence of primitive interaction $i \in I$.
 At the beginning of step $t$, the agent selects an \textit{intended interaction} $i_t \in I$.
-An example consists in moving a step forward.
+An example consists in moving forward for a predefined duration.
 At the end of step $t$, the agent receives the \textit{enacted interaction} $e_t \in I$ that was actually enacted. 
 If $i_t = e_t$ then the enaction is a success. 
 The agent \textit{did} move forward.
 Otherwise, the enaction of $i_t$ is a failure.
-For example, the agent actually enacted another interaction consisting in \textit{bumping} into an obstacle, which may have a negative valence.
+For example, the agent actually enacted another interaction consisting in bumping into an obstacle, which may have a negative valence.
 An RI agent learns to anticipate the results of its interactions, and tries to enact interactions of high valence.
 
-To help discovering spatial regularities of the environment, we have proposed the Parallel-RI (PRI) model \cite{gay:space} which allows the simultaneous enaction of multiple interactions.
+To help the agent discover that its environment has a spatial structure (2D in our experiments), we designed the Parallel-RI (PRI) model \cite{gay:space} which allows the simultaneous enaction of multiple interactions.
 The PRI considers additional stimuli that cannot be separated from the movement that produced them. The optical flow is an example of such stimuli, that must be associated to a movement to characterize a position in space. Thus, the PRI model considers \textit{primary interactions} as control loops (action,result), and \textit{secondary interactions} as a couple (interaction, stimulus).
 At the end of step $t$, the agent receives, not one, but a set of $k$ enacted interactions $E_t=\{e_1,..., e_k\} \subset I$, containing a primary interaction and a set of secondary interactions associated with this primary interaction.
 
@@ -117,7 +118,7 @@ As a PRI agent can only perceive its environment through enacted interactions, w
 
 Defining objects by learning the affordances they provide is abundant in literature, e.g., 
 \cite{paola:affordance, baleia:affordance, ugur:traversability}.
-Most of these approaches define affordances from perception, which limit the detection to next action, or requires prior knowledge on environment and space \cite[e.g.,][]{manoury:affordance} to detect distant affordances. 
+Most of these approaches define affordances from perception, which limits the detection to next action, or requires prior knowledge on environment and space \cite[e.g.,][]{manoury:affordance} to detect distant affordances. 
 Signatures cope with this limitation by using interactions instead of perception, allowing to exploit spatial properties implicitly encoded in interactions to detect distant affordances.
 
 
@@ -126,15 +127,16 @@ $S_i(E_{t}) \in [-1, 1]$ gives the prediction of successfully enacting interacti
 %²To improve estimations, 
 The agent adjusts the parameters of $S_i$ each time $i$ succeeds or fails.
 
-Signatures must be \textit{reversible}: they allow defining a pseudo-reverse function $\hat{S}_i : \{-1;1\} \rightarrow \mathcal{P}(\mathcal{P}(I))$ such that  $\hat{S}_i(1)$ gives the set of minimal contexts $C_l^i$ in which $i$ is possible, i.e. contexts that \textit{afford} $i$, and $\hat{S}_i(-1)$ gives the set of minimal contexts in which the enaction of $i$ is impossible.
+Signatures must be \textit{reversible} by defining a pseudo-reverse function $\hat{S}_i : \{-1;1\} \rightarrow \mathcal{P}(\mathcal{P}(I))$ such that  $\hat{S}_i(1)$ gives the set of minimal contexts $C_l^i$ in which $i$ is possible, i.e. contexts that \textit{afford} $i$, and $\hat{S}_i(-1)$ gives the set of minimal contexts in which the enaction of $i$ is impossible.
 
 
-However, when interacting with mobile entities, the presence of an affordance at the end of step $t$ does not guaranty that the interaction can be enacted during step $t+1$ because the entity may move in the meantime. We thus propose to separate the estimation of the presence of an affordance from the probability of success of enacting the interaction.
+However, when interacting with mobile entities, the presence of an affordance at the end of step $t$ does not guaranty that the interaction can be enacted during step $t+1$ because the entity may move in the meantime. 
+We thus must separate the estimation of the presence of an affordance from the prediction of success of enacting the interaction.
 
 
 
 
-\subsection{Separating Affordances from Certainty of Success}\label{separate}
+\subsection{Separating affordances from prediction of success}\label{separate}
 
 From an observer's perspective, three types of situations can happen when the agent tries interacting with a mobile entity:
 
@@ -187,19 +189,15 @@ S_i(E_t)~=~N_i(E_t) \times W_i
 \end{equation}
 The weight $W_i$ is restrained in the interval $[-1,1]$, allowing to inverse the result of the prediction, which makes neurons able to integrate contexts preventing the enaction of $i$.
 
-The learning process uses a classical gradient descent and prediction values obtained with $E_{t-1}$.
-The enaction result of $i$ is defined as $R_t=1$ in case of success ($i_t \in E_t$) and $R_t=-1$ in case of failure ($i_t \not\in E_t$).
-
-- The weight $W_i$ is updated as follows:
-
-$W_i ~\Leftarrow~ W_i+ \Delta_i . (\alpha * N_i - \alpha /2)$, ~with $\Delta_i=R_t-S_i(E_{t-1})$
+The learning process uses a classical gradient descent\footnote{The enaction result of $i_t$ is defined as $r_t=1$ in case of success ($i_t \in E_t$) and $r_t=-1$ in case of failure ($i_t \not\in E_t$).
+The weight $W_i$ is updated as follows:
+$W_i ~\Leftarrow~ W_i+ \Delta_i . (\alpha * N_i - \alpha /2)$, ~with $\Delta_i = r_t - S_i(E_{t-1})$
 and $\alpha$ the learning rate.
-
-- In case of a success, only the neuron with higher output is reinforced, all neurons are reinforced in case of failure:
-
+In case of success, only the neuron with the highest output is reinforced.
+In case of failure, all neurons are reinforced:
 $w_k^n ~\Leftarrow~ w_k^n+ \alpha . \Delta_i^n . N_i^n$,
-with $\Delta_i^n=(R_t.W_i + 1)/2 - N_i^n$
-
+with $\Delta_i^n=(r_t.W_i + 1)/2 - N_i^n$.}
+and prediction values obtained with $E_{t-1}$.
 
 A consequence of this implementation is that high weights of neurons characterize contexts affording $i$.
 Weights of neurons can be grouped by primary interaction, each group containing a weight related to a primary interaction and weights related to its associated secondary interaction. 
@@ -257,14 +255,15 @@ The signature thus gathered every interaction allowing to detect the presence of
 
 \begin{figure}[ht]
 \centerline{\includegraphics[scale=0.35]{img/Signatures1_5.pdf}}
-\caption{Signatures of interaction \textit{bump}, recorded after 100 000 simulation steps. A signature is characterized by the weights of 6 formal neurons, each neuron being represented by a column. 
+\caption{Signatures of interaction \textit{bump} after 100 000 steps. 
+It is characterized by the weights of 6 formal neurons, each neuron being represented by a column. 
 As the signature identified a unique context, we only represent weights of one neuron. 
-As external observers, we can organize weights of a neuron to make signatures more readable: first, weights associated with primary interactions are represented with five squares below (green for a positive weight, red for a negative weight). 
-Weights associated with secondary interaction are grouped according to their primary interaction, forming the four groups (from top to bottom: forward, eat, turn left, turn right ; bump does not produce visual interactions). 
-Each group is organized to place visual interaction with their associated position in space, relative to the agent (orange triangle). 
+As en external observer, knowing that the environment is 2D, we organize weights of a neuron to make signatures more readable: first, weights associated with primary interactions are represented with five squares below (green for a positive weight, red for a negative weight). 
+Weights associated with secondary interactions are grouped according to their primary interactions, forming the four groups (from top to bottom: forward, eat, turn left, turn right ; bump does not produce visual interactions). 
+Each group is organized to place visual interactions with their associated position in space, relative to the agent (orange triangle). 
 Colors associated with visual interactions are overlapped to generate signatures under the form of a RGB image. 
-Signature of bump identified a context that consist of seeing a green element in front of the agent, which corresponds, for an external observer, to the presence of a wall in front of the agent. 
-Bump is also related to the success of bump, as it can bump repeatedly.
+Signature of bump identified a context that consist of seeing a green element in front of the agent, which corresponds to the presence of a wall in front of the agent. 
+Bump is also related to the success of previous bumps, since the agent can bump repeatedly.
 }
 \label{fig:bump}
 \end{figure}
