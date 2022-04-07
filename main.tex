@@ -153,7 +153,7 @@ Situations 2 distorts the learning of signatures, as situations 1 and 2 can occu
 However, our preliminary tests showed that, despite remaining negative, signature predictions are slightly higher in case of situations 1-2 than in situations 3. Indeed, situations 1 allow contexts of interactions designating the affordance to emerge, while remaining insufficient to predict with a positive value.
 
 We thus use the average prediction in case of failure $\overline{S_i^f}$ as a threshold to distinguish between situations 2 and 3.
-When the interaction fails in an assumed situation 2 (i.e., $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limits the influence of situations 2 in signature construction. 
+When the interaction fails in an assumed situation 2 (i.e., $S_i(E_t)>\overline{S_i^f}$), the signature is not reinforced, which limits the influence of situations 2 in signature construction.
 
 
 Symmetrically, some interactions may fail due to the presence an entity in a specific location (e.g., trying to move forward will succeeds unless an obstacle appears).
@@ -345,11 +345,11 @@ seeing blue (Fig. \ref{fig:sigblue}) & / & 0.24 & 0.18 \\
 
 The detection of distant affordances relies on a property of signatures: a signature of an interaction designates an affordance as sets of interactions ~$\{j_k\} \in \hat{S}_i(1)$ allowing to detect the presence of this affordance.
 However, each interaction $j_k$ can have its own signature. 
-It is thus possible to define, from these signatures $S_{j_k}$, a set of contexts, called \textit{predecessor} $\hat{S}_i^{[j]}$, that, after enacting $j$, afford $i$. 
-The \textit{backmove} principle consists in defining the initial predecessor $\hat{S}_i^{\sigma_0}=\hat{S}_i(1)$, with $\sigma_0=\langle\rangle$ (empty sequence). 
+It is thus possible to define, from these signatures $S_{j_k}$, a set of contexts, called \textit{predecessor} $\hat{S}_i^{\langle j\rangle}$, that, after enacting $j$, afford $i$.
+The \textit{backmove} principle~\cite{gay:space} consists in defining the initial predecessor $\hat{S}_i^{\sigma_0}=\hat{S}_i(1)$, with $\sigma_0=\langle\rangle$ (empty sequence).
 Then, recursively project the predecessor $\hat{S}_i^{\sigma_a}$ with:
 $\hat{S}_i^{\sigma_{a+1}}\!=\!\bigcup_{\forall C_l^i \in \hat{S}_i^{\sigma_a} / j \in C_l^i} \{E \in \mathcal{P}(I) / \forall j_k \in C_l^i, S_{j_k}(E)\!>\!0\}$,
-with $\sigma_{a+1}=[j,\sigma_a]$ and $C_l^i=\{j_k\}$ contexts of interactions associated with the same primary interaction $j$.
+with $\sigma_{a+1}=\langle j,\sigma_a \rangle$ and $C_l^i=\{j_k\}$ contexts of interactions associated with the same primary interaction $j$.
 A predecessor $\hat{S}_i^\sigma$ characterizes a set of contexts that are expected to afford $i$ after enacting sequence $\sigma$.
 Then, when a context $C_l^j \in \hat{S}_i^\sigma$ is observed in $E_t$, a distant affordance of $i$ is assumed to be present at \textit{position} $\sigma$, in egocentric reference.
 
@@ -360,7 +360,7 @@ Applying the backmove principle to a signature of a probabilistic affordance wou
 We thus propose to only consider most probable predicted position of an affordance after enacting a sequence $\sigma$.
 
 The proposed backmove method introduces a new structure called projection sequence. The idea is to split predecessors into individual interactions: for each backmove, each sequence considers a unique interaction of $S_i^{\sigma}$.
-A projection sequence $\xi$ is a structure characterized by:
+A projection sequence $\xi$ is a tuple $(\sigma,\lambda,p)$ characterized by:
 
 - a sequence $\sigma$ of primary interactions, characterizing the movement required to reach the affordance,
 
@@ -369,10 +369,11 @@ A projection sequence $\xi$ is a structure characterized by:
 - a probability $p$ characterizing the probability of enacting $i$ from the partial affordance characterized by the sequence.
 
 
-The set of projection sequence is constructed as follows: from a signature $S_i$, a first set of sequence $(\sigma_0, \lambda_0, p_0)$ is generated for each interaction $j_k$ designated by $S_i$, where $\sigma=[\: ]$, $\lambda=[j_k]$,
-and $p$ is the success ratio of the context $C_l^i$ containing $j_k$. Note that this set characterizes $S_i$ under the form of projection sequences.
+The set of projection sequence is constructed as follows: from a signature $S_i$, a first set of sequences $\xi_i^k = (\sigma_0^k, \lambda_0^k, p_0^k)$ is generated for each interaction $j_k \in C_l^i$ (and for each $C_l^i \in \hat{S}_i(1)$), %designated by $S_i$,
+where $\sigma_0=\langle\: \rangle$, $\lambda_0=\langle j_k\rangle$,
+and $p_0$ is the success ratio of the context $C_l^i$ containing $j_k$. Note that this set characterizes $S_i$ under the form of projection sequences.
 
-Then, the set of sequences is recursively backmoved. A sequence $(\sigma, \lambda, \eta, p)$ leads to interaction $\lambda[0]$. This sequence is backmoved by primitive interaction $j$ associated to $\lambda[0]$ (or by $\lambda[0]$ if primary): from signature $S_{\lambda[0]}$, a set of sequences $([j,\sigma], [j_k,\lambda], [n,\eta], p*p_{S_{\lambda[0]}^{j,n}})$ is generated, for each interaction $j_k$ designated by $S_{\lambda[0]}$.
+Then, the set of sequences is recursively backmoved. A sequence $(\sigma, \lambda, p)$ leads to interaction $\lambda[0]$. This sequence is backmoved by primitive interaction $j$ associated to $\lambda[0]$ (or by $\lambda[0]$ if primary): from signature $S_{\lambda[0]}$, a set of sequences $(\langle j,\sigma \rangle, \langle j_k,\lambda \rangle, p*p_{C_{\lambda[0]}^{j,n}})$ is generated, for each interaction {\small $j_k \in C_{\lambda[0]}^{j,n}$} designated by $S_{\lambda[0]}$ (i.e. {\small $C_{\lambda[0]}^{j,n} \in \hat{S}_{\lambda[0]}(1)$}).
 
 A sequence $\xi_1$ is removed from the list if it exists another sequence $\xi_2$ with $p_{\xi_2}>p_{\xi_1}$ that have similar properties:
 
