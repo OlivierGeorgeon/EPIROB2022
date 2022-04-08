@@ -22,7 +22,7 @@
 \begin{document}
 
 \title{
-Discovering, recognizing, and localizing dynamic affordances to adapt to unknown agents
+Identifying and localizing dynamic affordances to improve interactions with other agents
 \thanks{This work is supported by the French National Research Agency in the framework of the "Investissements d’avenir” program (ANR-15-IDEX-02).}
 }
 
@@ -46,7 +46,14 @@ ogeorgeon@univ-catholyon.fr}
 \maketitle
 
 \begin{abstract}
-We present an architecture for self-motivated and environmentally-agnostic agents to integrate non-predictible elements in their emerging model of their environment. This approach aims designing agents that construct their own model of their environment through experience, rather than exploiting pre-coded knowledge. Over time, the agent learns the relation between its perception of objects and the interactions that they afford, in the form of data structures, called signatures of interaction. These signatures are used to recognize and localize objects (or affordances) in surrounding environment, that are stored and tracked in a spatial memory, and used to generate behaviors satisfying agent's motivational principles. A long term objective of this approach is to study the interaction between multiple agents and the emergence of collaborative or competitive behaviors. Emergence of such behaviors requires the possibility to integrate other agents in the environment model and predict possible actions of these agents. In this paper, we propose a novel architecture of signature of interaction that can define, recognize and localize non-predictable affordances.
+%We present an architecture for self-motivated and environmentally-agnostic agents to integrate non-predictible elements in their emerging model of their environment. This approach aims designing agents that construct their own model of their environment through experience, rather than exploiting pre-coded knowledge. Over time, the agent learns the relation between its perception of objects and the interactions that they afford, in the form of data structures, called signatures of interaction. These signatures are used to recognize and localize objects (or affordances) in surrounding environment, that are stored and tracked in a spatial memory, and used to generate behaviors satisfying agent's motivational principles. A long term objective of this approach is to study the interaction between multiple agents and the emergence of collaborative or competitive behaviors. Emergence of such behaviors requires the possibility to integrate other agents in the environment model and predict possible actions of these agents. In this paper, we propose a novel architecture of signature of interaction that can define, recognize and localize non-predictable affordances.
+
+Allowing robots to learn by themselves to coordinate their actions or to cooperate requires that they be able to recognize each other and be capable of intersubjectivity.
+To comply with artificial developmental learning and self motivation, we follow the \textit{radical interactionism} hypothesis, in which an agent has no \textit{a priori} knowledge on its environment nor its spatial structure, and does not receive rewards defined as direct function of environment states.
+We aim at designing agents that learn to efficiently interact with other entities that may be static or may make irregular moves following their own motivation.
+In this paper, we propose new mechanisms allowing to identify and localize such mobile entities. At this end, an agent has to learn the relation between its perception of mobile objects and the interactions that they afford. These relations are recorded under the form of data structures, called signatures of interaction, that characterize objects in its point of view, and whose properties are exploited to detect distant objects. %The position of a mobile object is defined here by its most probable predicted positions.
+%This detection allows defining a context of affordance in which the agent can use to generate behaviors satisfying its motivational principles.
+These mechanisms were tested in a simulated prey-predator environment. The obtained signatures showed that the agent (predator) successfully learned to identify mobile preys and their probabilistic properties, and can detect distant preys in its surrounding environment. %, without using \textit{a priori} knwoledge on spatial structure of the environment.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -103,8 +110,9 @@ To help the agent discover that its environment has a spatial structure (2D in o
 The PRI considers additional stimuli that cannot be separated from the movement that produced them. The optical flow is an example of such stimuli, that must be associated to a movement to characterize a position in space. Thus, the PRI model considers \textit{primary interactions} as control loops (action,result), and \textit{secondary interactions} as a couple (interaction, stimulus).
 At the end of step $t$, the agent receives, not one, but a set of $k$ enacted interactions $E_t=\{e_1,..., e_k\} \subset I$, containing a primary interaction and a set of secondary interactions associated with this primary interaction.
 
-Previous PRI experiments showed that the agent was able to define, recognize and localize affordances (possibilities of enacting an interaction \cite{gibson:affordances}), and to store and keep track of them in an emergent structure, called Space Memory \cite{gay:space}. This memory generates an implicit context of affordances that the agent can exploit to generate behaviors in accordance with its interactional motivation.
-A subsequent model also showed the possibility to identify objects that moved in a straight line, by considering sequences of consecutive interactions \cite{gay:dynamic}. 
+Previous PRI experiments showed that the agent was able to identify and localize static affordances (possibilities of enacting an interaction \cite{gibson:affordances}), and to store and keep track of them in an emergent structure, called Space Memory \cite{gay:space}. This memory generates an implicit context of affordances that the agent can exploit to generate behaviors in accordance with its interactional motivation.
+A subsequent model also showed the possibility to identify objects that moved in a straight line, by considering sequences of %consecutive
+interactions \cite{gay:dynamic}.
 These models, however, could not integrate entities moving irregularly (other agents).
 The present study addresses this limitation.
 
@@ -396,8 +404,8 @@ However, a sequence only characterizes a part of the affordance; a larger part o
 The detection of distant affordances of an interaction $i$ starts by selecting projection sequences $\xi_k^i$ of signature $S_i$ whose last element is enacted, defining \textit{candidate} affordances of $i$. Each candidate $\xi_k^i$ gathers a set $\Theta_{\xi_k^i} = \{\xi_l^i ~/~ \sigma_l = \sigma_k \wedge \lambda_l[0] \in E_t\}$ of sequences, sharing the same $\sigma$ and whose last element $\lambda[0]$ is enacted.
 
 The set $E_{\xi_k^i}^0=\{\lambda_{\xi_l^i}[0] ~/~\xi_l^i \in \Theta_{\xi_k^i}\}$ of last interaction of sequences of $\Theta_{\xi_k^i}$ represents a set $E_{\xi_k^i}^0 \subset E_t$ gathering interactions that can intervene in the detection of the affordance of $i$ at position $\sigma_{\xi_k^i}$.
-From a context $E_{\xi_k^i}^a$, the following recursive procedure is applied: a candidate context is defined as $C_{\xi_k^i}^{a+1} = \{\lambda_{\xi_k^i}[a+1] ,~ \lambda_{\xi_k^i} \in \Theta_{\xi_k^i} \} $. 
-Then, each element $j_k \in C_{\xi_k^i}^{a+1}$ is evaluated with $S_{j_k}(E_{\xi_k^i}^a)$. 
+From a context $E_{\xi_k^i}^a$, the following recursive procedure is applied: a candidate context is defined as $C_{\xi_k^i}^{a+1} = \{\lambda_{\xi_k^i}[a+1] ,~ \lambda_{\xi_k^i} \in \Theta_{\xi_k^i} \} $.
+Then, each element $j_k \in C_{\xi_k^i}^{a+1}$ is evaluated with $S_{j_k}(E_{\xi_k^i}^a)$.
 Interactions predicted as a failure are removed from $C_{\xi_k^i}^{a+1}$, and their projection sequences, removed from $\Theta_{\xi_k^i}$. 
 Remaining interactions define context $E_{\xi_k^i}^{a+1}$. 
 The process is repeated until sequence $\sigma_{\xi_k^i}$ is completed (or until $\Theta_{\xi_k^i}$ is empty). 
